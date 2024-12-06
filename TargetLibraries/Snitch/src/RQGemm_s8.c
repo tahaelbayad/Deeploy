@@ -33,12 +33,9 @@
 // Assumptions:
 //  - per-row requantization
 //  - single batch
-void RQGemm_s8_row_parallel(int8_t const *__restrict__ pSrcA,
-                            int8_t const *__restrict__ pSrcB,
-                            int32_t const *__restrict__ pSrcC,
-                            int8_t *__restrict__ pDstY, uint32_t M, uint32_t N,
-                            uint32_t O, int32_t alpha, int32_t beta,
-                            int32_t *mul, int32_t *add, int32_t log2D) {
+void RQGemm_s8_row_parallel(int8_t const *__restrict__ pSrcA, int8_t const *__restrict__ pSrcB,
+                            int32_t const *__restrict__ pSrcC, int8_t *__restrict__ pDstY, uint32_t M, uint32_t N,
+                            uint32_t O, int32_t alpha, int32_t beta, int32_t *mul, int32_t *add, int32_t log2D) {
   uint32_t core_id = snrt_global_compute_core_idx();
   uint32_t numThreads = snrt_global_compute_core_num();
 
@@ -46,8 +43,7 @@ void RQGemm_s8_row_parallel(int8_t const *__restrict__ pSrcA,
   uint32_t const MQuotient = M / numThreads;
   uint32_t const MRemainder = M % numThreads;
   uint32_t const MSize = MQuotient + (core_id < MRemainder ? 1 : 0);
-  uint32_t const MStart =
-      core_id * MQuotient + (core_id < MRemainder ? core_id : MRemainder);
+  uint32_t const MStart = core_id * MQuotient + (core_id < MRemainder ? core_id : MRemainder);
   uint32_t const MEnd = MStart + MSize;
 
   if (core_id < numThreads) {
@@ -71,12 +67,9 @@ void RQGemm_s8_row_parallel(int8_t const *__restrict__ pSrcA,
 //  - per-row requantization
 //  - transposed input B
 //  - single batch
-void RQGemm_s8_row_parallel_unrolled(int8_t const *__restrict__ pSrcA,
-                                     int8_t const *__restrict__ pSrcB,
-                                     int32_t const *__restrict__ pSrcC,
-                                     int8_t *__restrict__ pDstY, uint32_t M,
-                                     uint32_t N, uint32_t O, int32_t alpha,
-                                     int32_t beta, int32_t *mul, int32_t *add,
+void RQGemm_s8_row_parallel_unrolled(int8_t const *__restrict__ pSrcA, int8_t const *__restrict__ pSrcB,
+                                     int32_t const *__restrict__ pSrcC, int8_t *__restrict__ pDstY, uint32_t M,
+                                     uint32_t N, uint32_t O, int32_t alpha, int32_t beta, int32_t *mul, int32_t *add,
                                      int32_t log2D) {
   uint32_t core_id = snrt_global_compute_core_idx();
   uint32_t numThreads = snrt_global_compute_core_num();
@@ -85,8 +78,7 @@ void RQGemm_s8_row_parallel_unrolled(int8_t const *__restrict__ pSrcA,
   uint32_t const MQuotient = M / numThreads;
   uint32_t const MRemainder = M % numThreads;
   uint32_t const MSize = MQuotient + (core_id < MRemainder ? 1 : 0);
-  uint32_t const MStart =
-      core_id * MQuotient + (core_id < MRemainder ? core_id : MRemainder);
+  uint32_t const MStart = core_id * MQuotient + (core_id < MRemainder ? core_id : MRemainder);
   uint32_t const MEnd = MStart + MSize;
 
   if (core_id < numThreads) {
@@ -181,12 +173,9 @@ void RQGemm_s8_row_parallel_unrolled(int8_t const *__restrict__ pSrcA,
 //  - per-row requantization
 //  - transposed input B
 //  - single batch
-void RQGemm_s8_transB_row_parallel(int8_t const *__restrict__ pSrcA,
-                                   int8_t const *__restrict__ pSrcB,
-                                   int32_t const *__restrict__ pSrcC,
-                                   int8_t *__restrict__ pDstY, uint32_t M,
-                                   uint32_t N, uint32_t O, int32_t alpha,
-                                   int32_t beta, int32_t *mul, int32_t *add,
+void RQGemm_s8_transB_row_parallel(int8_t const *__restrict__ pSrcA, int8_t const *__restrict__ pSrcB,
+                                   int32_t const *__restrict__ pSrcC, int8_t *__restrict__ pDstY, uint32_t M,
+                                   uint32_t N, uint32_t O, int32_t alpha, int32_t beta, int32_t *mul, int32_t *add,
                                    int32_t log2D) {
   uint32_t core_id = snrt_global_compute_core_idx();
   uint32_t numThreads = snrt_global_compute_core_num();
@@ -195,8 +184,7 @@ void RQGemm_s8_transB_row_parallel(int8_t const *__restrict__ pSrcA,
   uint32_t const MQuotient = M / numThreads;
   uint32_t const MRemainder = M % numThreads;
   uint32_t const MSize = MQuotient + (core_id < MRemainder ? 1 : 0);
-  uint32_t const MStart =
-      core_id * MQuotient + (core_id < MRemainder ? core_id : MRemainder);
+  uint32_t const MStart = core_id * MQuotient + (core_id < MRemainder ? core_id : MRemainder);
   uint32_t const MEnd = MStart + MSize;
 
   if (core_id < numThreads) {
@@ -220,11 +208,10 @@ void RQGemm_s8_transB_row_parallel(int8_t const *__restrict__ pSrcA,
 //  - per-row requantization
 //  - transposed input B
 //  - single batch
-void RQGemm_s8_transB_row_parallel_unrolled(
-    int8_t const *__restrict__ pSrcA, int8_t const *__restrict__ pSrcB,
-    int32_t const *__restrict__ pSrcC, int8_t *__restrict__ pDstY, uint32_t M,
-    uint32_t N, uint32_t O, int32_t alpha, int32_t beta, int32_t *mul,
-    int32_t *add, int32_t log2D) {
+void RQGemm_s8_transB_row_parallel_unrolled(int8_t const *__restrict__ pSrcA, int8_t const *__restrict__ pSrcB,
+                                            int32_t const *__restrict__ pSrcC, int8_t *__restrict__ pDstY, uint32_t M,
+                                            uint32_t N, uint32_t O, int32_t alpha, int32_t beta, int32_t *mul,
+                                            int32_t *add, int32_t log2D) {
   uint32_t core_id = snrt_global_compute_core_idx();
   uint32_t numThreads = snrt_global_compute_core_num();
 
@@ -232,8 +219,7 @@ void RQGemm_s8_transB_row_parallel_unrolled(
   uint32_t const MQuotient = M / numThreads;
   uint32_t const MRemainder = M % numThreads;
   uint32_t const MSize = MQuotient + (core_id < MRemainder ? 1 : 0);
-  uint32_t const MStart =
-      core_id * MQuotient + (core_id < MRemainder ? core_id : MRemainder);
+  uint32_t const MStart = core_id * MQuotient + (core_id < MRemainder ? core_id : MRemainder);
   uint32_t const MEnd = MStart + MSize;
 
   if (core_id < numThreads) {
@@ -324,13 +310,12 @@ void RQGemm_s8_transB_row_parallel_unrolled(
   }
 }
 
-void RQGemm_parallel_s8_rv32im(
-    int8_t const *__restrict__ pSrcA, int8_t const *__restrict__ pSrcB,
-    int32_t const *__restrict__ pSrcC, int8_t *__restrict__ pDstY, uint32_t M,
-    uint32_t N, uint32_t P, int32_t alpha, int32_t beta, int32_t transA,
-    int32_t transB, int32_t *mul, int32_t *add, int32_t log2D, bool rounding,
-    bool per_row_quant, int32_t A_offset, int32_t B_offset, int32_t C_offset,
-    int32_t Y_offset, int8_t output_min, int8_t output_max) {
+void RQGemm_parallel_s8_rv32im(int8_t const *__restrict__ pSrcA, int8_t const *__restrict__ pSrcB,
+                               int32_t const *__restrict__ pSrcC, int8_t *__restrict__ pDstY, uint32_t M, uint32_t N,
+                               uint32_t P, int32_t alpha, int32_t beta, int32_t transA, int32_t transB, int32_t *mul,
+                               int32_t *add, int32_t log2D, bool rounding, bool per_row_quant, int32_t A_offset,
+                               int32_t B_offset, int32_t C_offset, int32_t Y_offset, int8_t output_min,
+                               int8_t output_max) {
 
   uint32_t core_id = snrt_global_compute_core_idx();
   uint32_t numThreads = snrt_global_compute_core_num();

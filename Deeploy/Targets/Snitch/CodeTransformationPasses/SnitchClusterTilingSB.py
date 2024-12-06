@@ -25,12 +25,11 @@
 
 import copy
 from collections import namedtuple
-from typing import Dict, List, Literal, Tuple
-
-from Deeploy.DeeployTypes import CodeSnippet, ExecutionBlock, NetworkContext, NodeTemplate, OperatorRepresentation
-from Deeploy.Targets.Snitch.DataTypes import Snitch_DMA_copy
+from typing import Any, Dict, List, Literal, Tuple
 from Deeploy.TilingExtension.CodeTransformationPasses.TilingCodeGeneration import TilingCodeGeneration
 from Deeploy.TilingExtension.CodeTransformationPasses.TilingPrototypes import SingleBufferingTilingMixIn, TilingMetaInfo
+from Deeploy.Targets.Snitch.DataTypes import Snitch_DMA_copy
+from Deeploy.DeeployTypes import ExecutionBlock, NetworkContext, NodeTemplate, OperatorRepresentation, CodeSnippet
 from Deeploy.TilingExtension.MemoryConstraints import NodeMemoryConstraint
 from Deeploy.TilingExtension.TilingCodegen import HyperRectangle, TilingSchedule, VariableReplacementScheme, \
     calculateRectangleOffset, minimizeRectangleDims
@@ -283,43 +282,37 @@ class SnitchClusterTilingSB(TilingCodeGeneration):
 
         name = namePrefix + "_dst_offset"
         cb = ctxt.ConstantBuffer(name, [len(updateList)], dstOffsetList)
-        ctxt, operatorRepresentation = self._hoistConstantAndReference(ctxt, cb, operatorRepresentation, nodeName,
-                                                                       'dstOffsetPtr')
+        ctxt, operatorRepresentation = self._hoistConstantAndReference(ctxt, cb, operatorRepresentation, nodeName, 'dstOffsetPtr')
 
         name = namePrefix + "_src_offset"
         cb = ctxt.ConstantBuffer(name, [len(updateList)], srcOffsetList)
-        ctxt, operatorRepresentation = self._hoistConstantAndReference(ctxt, cb, operatorRepresentation, nodeName,
-                                                                       'srcOffsetPtr')
+        ctxt, operatorRepresentation = self._hoistConstantAndReference(ctxt, cb, operatorRepresentation, nodeName, 'srcOffsetPtr')
 
         name = namePrefix + "_size"
         cb = ctxt.ConstantBuffer(name, [len(updateList)], sizeList)
-        ctxt, operatorRepresentation = self._hoistConstantAndReference(ctxt, cb, operatorRepresentation, nodeName,
-                                                                       'sizePtr',
-                                                                       Snitch_DMA_copy.structTypeDict['size'])
+        ctxt, operatorRepresentation = self._hoistConstantAndReference(ctxt, cb, operatorRepresentation, nodeName, 'sizePtr',
+                                                        Snitch_DMA_copy.structTypeDict['size'])
 
         name = namePrefix + "_dst_stride"
         cb = ctxt.ConstantBuffer(name, [len(updateList)], dstStrideList)
-        ctxt, operatorRepresentation = self._hoistConstantAndReference(ctxt, cb, operatorRepresentation, nodeName,
-                                                                       'dstStridePtr',
-                                                                       Snitch_DMA_copy.structTypeDict['dst_stride'])
+        ctxt, operatorRepresentation = self._hoistConstantAndReference(ctxt, cb, operatorRepresentation, nodeName, 'dstStridePtr',
+                                                        Snitch_DMA_copy.structTypeDict['dst_stride'])
 
         name = namePrefix + "_src_stride"
         cb = ctxt.ConstantBuffer(name, [len(updateList)], srcStideList)
-        ctxt, operatorRepresentation = self._hoistConstantAndReference(ctxt, cb, operatorRepresentation, nodeName,
-                                                                       'srcStridePtr',
-                                                                       Snitch_DMA_copy.structTypeDict['src_stride'])
+        ctxt, operatorRepresentation = self._hoistConstantAndReference(ctxt, cb, operatorRepresentation, nodeName, 'srcStridePtr',
+                                                        Snitch_DMA_copy.structTypeDict['src_stride'])
 
         name = namePrefix + "_repeat"
         cb = ctxt.ConstantBuffer(name, [len(updateList)], repeatList)
-        ctxt, operatorRepresentation = self._hoistConstantAndReference(ctxt, cb, operatorRepresentation, nodeName,
-                                                                       'repeatPtr',
-                                                                       Snitch_DMA_copy.structTypeDict['repeat'])
+        ctxt, operatorRepresentation = self._hoistConstantAndReference(ctxt, cb, operatorRepresentation, nodeName, 'repeatPtr',
+                                                        Snitch_DMA_copy.structTypeDict['repeat'])
 
         return ctxt, operatorRepresentation
 
-    def _generateEgressPointerUpdates(
-            self, nodeMemoryConstraint: NodeMemoryConstraint, tilingSchedule: TilingSchedule, ctxt: NetworkContext,
-            operatorRepresentation: OperatorRepresentation) -> Tuple[NetworkContext, List[CodeSnippet]]:
+    def _generateEgressPointerUpdates(self, nodeMemoryConstraint: NodeMemoryConstraint, tilingSchedule: TilingSchedule,
+                                      ctxt: NetworkContext,
+                                      operatorRepresentation: OperatorRepresentation) -> Tuple[NetworkContext, List[CodeSnippet]]:
 
         updates = []
         newCtxt = ctxt.copy()
@@ -334,15 +327,15 @@ class SnitchClusterTilingSB(TilingCodeGeneration):
 
         return newCtxt, updates
 
-    def _generateIngressPointerUpdates(
-            self, nodeMemoryConstraint: NodeMemoryConstraint, tilingSchedule: TilingSchedule, ctxt: NetworkContext,
-            operatorRepresentation: OperatorRepresentation) -> Tuple[NetworkContext, List[CodeSnippet]]:
+    def _generateIngressPointerUpdates(self, nodeMemoryConstraint: NodeMemoryConstraint, tilingSchedule: TilingSchedule,
+                                       ctxt: NetworkContext,
+                                       operatorRepresentation: OperatorRepresentation) -> Tuple[NetworkContext, List[CodeSnippet]]:
 
         updates = []
         newCtxt = ctxt.copy()
 
-        updateDict = self._generatePointerUpdates(ctxt, operatorRepresentation, tilingSchedule.inputLoadSchedule,
-                                                  nodeMemoryConstraint, tilingSchedule)
+        updateDict = self._generatePointerUpdates(ctxt, operatorRepresentation, tilingSchedule.inputLoadSchedule, nodeMemoryConstraint,
+                                                  tilingSchedule)
 
         for key, updateList in updateDict.items():
 
@@ -352,8 +345,7 @@ class SnitchClusterTilingSB(TilingCodeGeneration):
         return newCtxt, updates
 
     def _generateVariableUpdates(self, tilingSchedule: TilingSchedule, variableReplacement: VariableReplacementScheme,
-                                 ctxt: NetworkContext,
-                                 operatorRepresentation: OperatorRepresentation) -> List[CodeSnippet]:
+                                 ctxt: NetworkContext, operatorRepresentation: OperatorRepresentation) -> List[CodeSnippet]:
 
         updates = []
 
@@ -419,24 +411,20 @@ class SnitchClusterTilingSB(TilingCodeGeneration):
 
         return DMATransferCalls, DMAWaitStatements
 
-    def _generateIngressDMACode(
-            self, tilingSchedule: TilingSchedule, nodeMemoryConstraint: NodeMemoryConstraint, ctxt: NetworkContext,
-            operatorRepresentation: OperatorRepresentation) -> Tuple[List[CodeSnippet], List[CodeSnippet]]:
+    def _generateIngressDMACode(self, tilingSchedule: TilingSchedule, nodeMemoryConstraint: NodeMemoryConstraint,
+                                ctxt: NetworkContext, operatorRepresentation: OperatorRepresentation) -> Tuple[List[CodeSnippet], List[CodeSnippet]]:
 
         importLoadStep = tilingSchedule.inputLoadSchedule
-        ingressDMATransferCalls, ingressDMAWaitStatements = self._generateDMACode(nodeMemoryConstraint, ctxt,
-                                                                                  operatorRepresentation,
+        ingressDMATransferCalls, ingressDMAWaitStatements = self._generateDMACode(nodeMemoryConstraint, ctxt, operatorRepresentation,
                                                                                   importLoadStep, "ToL1")
         return ingressDMATransferCalls, ingressDMAWaitStatements
 
-    def _generateEgressDMACode(
-            self, tilingSchedule: TilingSchedule, nodeMemoryConstraint: NodeMemoryConstraint, ctxt: NetworkContext,
-            operatorRepresentation: OperatorRepresentation) -> Tuple[List[CodeSnippet], List[CodeSnippet]]:
+    def _generateEgressDMACode(self, tilingSchedule: TilingSchedule, nodeMemoryConstraint: NodeMemoryConstraint,
+                               ctxt: NetworkContext, operatorRepresentation: OperatorRepresentation) -> Tuple[List[CodeSnippet], List[CodeSnippet]]:
 
         exportLoadStep = tilingSchedule.outputLoadSchedule
-        egressDMATransferCalls, egressDMAWaitStatements = self._generateDMACode(nodeMemoryConstraint, ctxt,
-                                                                                operatorRepresentation, exportLoadStep,
-                                                                                "FromL1")
+        egressDMATransferCalls, egressDMAWaitStatements = self._generateDMACode(nodeMemoryConstraint, ctxt, operatorRepresentation,
+                                                                                exportLoadStep, "FromL1")
 
         return egressDMATransferCalls, egressDMAWaitStatements
 
@@ -455,8 +443,7 @@ class SnitchClusterTilingSB(TilingCodeGeneration):
 
         ctxt, ingressDMAUpdates = self._generateIngressPointerUpdates(nodeMemoryConstraint, tilingSchedule, ctxt,
                                                                       operatorRepresentation)
-        ctxt, egressDMAUpdates = self._generateEgressPointerUpdates(nodeMemoryConstraint, tilingSchedule, ctxt,
-                                                                    operatorRepresentation)
+        ctxt, egressDMAUpdates = self._generateEgressPointerUpdates(nodeMemoryConstraint, tilingSchedule, ctxt, operatorRepresentation)
 
         openLoopStatement = [
             CodeSnippet(self._openTileLoopTemplate, {
@@ -472,8 +459,7 @@ class SnitchClusterTilingSB(TilingCodeGeneration):
             })
         ]
 
-        variableUpdates = self._generateVariableUpdates(tilingSchedule, variableReplacement, ctxt,
-                                                        operatorRepresentation)
+        variableUpdates = self._generateVariableUpdates(tilingSchedule, variableReplacement, ctxt, operatorRepresentation)
 
         metaInfo = TilingMetaInfo(nodeName = operatorRepresentation['nodeName'] + "_L2",
                                   nodeOps = operatorRepresentation['nodeOps'],
@@ -488,10 +474,10 @@ class SnitchClusterTilingSB(TilingCodeGeneration):
 
         return ctxt, newExecutionBlock, True
 
-    def generateTilingLoop(
-            self, ctxt: NetworkContext, executionBlock: ExecutionBlock, nodeMemoryConstraint: NodeMemoryConstraint,
-            tilingSchedules: List[TilingSchedule], variableReplacement: VariableReplacementScheme,
-            operatorRepresentation: OperatorRepresentation) -> Tuple[NetworkContext, ExecutionBlock, bool]:
+    def generateTilingLoop(self, ctxt: NetworkContext, executionBlock: ExecutionBlock,
+                           nodeMemoryConstraint: NodeMemoryConstraint, tilingSchedules: List[TilingSchedule],
+                           variableReplacement: VariableReplacementScheme,
+                           operatorRepresentation: OperatorRepresentation) -> Tuple[NetworkContext, ExecutionBlock, bool]:
 
         flatTilingSchedule = copy.copy(tilingSchedules[0])
         for tilingSchedule in tilingSchedules[1:]:
@@ -508,8 +494,7 @@ class SnitchClusterTilingSB(TilingCodeGeneration):
             if not len(offsetList) == 1:
                 return ctxt, executionBlock, False
 
-        operatorRepresentation["numTiles"] = self._hoistNumTiles(ctxt, operatorRepresentation['nodeName'],
-                                                                 tilingSchedules)
+        operatorRepresentation["numTiles"] = self._hoistNumTiles(ctxt, operatorRepresentation['nodeName'], tilingSchedules)
 
         return self._tilingLoop(ctxt, executionBlock, nodeMemoryConstraint, flatTilingSchedule, variableReplacement,
                                 operatorRepresentation)

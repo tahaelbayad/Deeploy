@@ -58,12 +58,9 @@
  * parallelization = row-wise
  * bias pushing    = no
  */
-void RQGemm_s8_row_parallel(int8_t const *__restrict__ pSrcA,
-                            int8_t const *__restrict__ pSrcB,
-                            int32_t const *__restrict__ pSrcC,
-                            int8_t *__restrict__ pDstY, uint32_t M, uint32_t N,
-                            uint32_t O, int32_t alpha, int32_t beta,
-                            int32_t *mul, int32_t *add, int32_t log2D);
+void RQGemm_s8_row_parallel(int8_t const *__restrict__ pSrcA, int8_t const *__restrict__ pSrcB,
+                            int32_t const *__restrict__ pSrcC, int8_t *__restrict__ pDstY, uint32_t M, uint32_t N,
+                            uint32_t O, int32_t alpha, int32_t beta, int32_t *mul, int32_t *add, int32_t log2D);
 
 /*
  * General Requantized Matrix Multiplication ----------------------------------
@@ -75,12 +72,9 @@ void RQGemm_s8_row_parallel(int8_t const *__restrict__ pSrcA,
  * parallelization = row-wise
  * bias pushing    = no
  */
-void RQGemm_s8_row_parallel_unrolled(int8_t const *__restrict__ pSrcA,
-                                     int8_t const *__restrict__ pSrcB,
-                                     int32_t const *__restrict__ pSrcC,
-                                     int8_t *__restrict__ pDstY, uint32_t M,
-                                     uint32_t N, uint32_t O, int32_t alpha,
-                                     int32_t beta, int32_t *mul, int32_t *add,
+void RQGemm_s8_row_parallel_unrolled(int8_t const *__restrict__ pSrcA, int8_t const *__restrict__ pSrcB,
+                                     int32_t const *__restrict__ pSrcC, int8_t *__restrict__ pDstY, uint32_t M,
+                                     uint32_t N, uint32_t O, int32_t alpha, int32_t beta, int32_t *mul, int32_t *add,
                                      int32_t log2D);
 
 /*
@@ -93,12 +87,9 @@ void RQGemm_s8_row_parallel_unrolled(int8_t const *__restrict__ pSrcA,
  * parallelization = row-wise
  * bias pushing    = no
  */
-void RQGemm_s8_transB_row_parallel(int8_t const *__restrict__ pSrcA,
-                                   int8_t const *__restrict__ pSrcB,
-                                   int32_t const *__restrict__ pSrcC,
-                                   int8_t *__restrict__ pDstY, uint32_t M,
-                                   uint32_t N, uint32_t O, int32_t alpha,
-                                   int32_t beta, int32_t *mul, int32_t *add,
+void RQGemm_s8_transB_row_parallel(int8_t const *__restrict__ pSrcA, int8_t const *__restrict__ pSrcB,
+                                   int32_t const *__restrict__ pSrcC, int8_t *__restrict__ pDstY, uint32_t M,
+                                   uint32_t N, uint32_t O, int32_t alpha, int32_t beta, int32_t *mul, int32_t *add,
                                    int32_t log2D);
 
 /*
@@ -111,11 +102,10 @@ void RQGemm_s8_transB_row_parallel(int8_t const *__restrict__ pSrcA,
  * parallelization = row-wise
  * bias pushing    = no
  */
-void RQGemm_s8_transB_row_parallel_unrolled(
-    int8_t const *__restrict__ pSrcA, int8_t const *__restrict__ pSrcB,
-    int32_t const *__restrict__ pSrcC, int8_t *__restrict__ pDstY, uint32_t M,
-    uint32_t N, uint32_t O, int32_t alpha, int32_t beta, int32_t *mul,
-    int32_t *add, int32_t log2D);
+void RQGemm_s8_transB_row_parallel_unrolled(int8_t const *__restrict__ pSrcA, int8_t const *__restrict__ pSrcB,
+                                            int32_t const *__restrict__ pSrcC, int8_t *__restrict__ pDstY, uint32_t M,
+                                            uint32_t N, uint32_t O, int32_t alpha, int32_t beta, int32_t *mul,
+                                            int32_t *add, int32_t log2D);
 
 /*
  * General Requantized Matrix Multiplication ----------------------------------

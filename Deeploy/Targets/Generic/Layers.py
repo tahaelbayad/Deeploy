@@ -25,11 +25,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import List, Tuple
+from typing import Dict, List, Tuple
 
 import numpy as np
 
-from Deeploy.DeeployTypes import NodeMapper, ONNXLayer, OperatorRepresentation, Shape
+from Deeploy.DeeployTypes import NodeMapper, ONNXLayer, Shape, OperatorRepresentation
 
 
 class ConcatLayer(ONNXLayer):
