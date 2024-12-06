@@ -751,6 +751,7 @@ class iHardswishParser(NodeParser):
 
         return ctxt, True
 
+
 class iNoNormParser(NodeParser):
 
     def __init__(self):
@@ -2149,6 +2150,7 @@ class GenericGEMMParser(GEMMParser):
             return newCtxt, True
 
         return ctxt, False
+
 
 class RQAddParser(AddParser):
 
