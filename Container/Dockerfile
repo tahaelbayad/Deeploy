@@ -78,6 +78,7 @@ RUN make pulp-sdk
 RUN make qemu
 RUN make mempool
 RUN make banshee
+RUN make gvsoc
 
 # Dependencies needed for compiling Snitch
 ## Bender's installaton
@@ -114,6 +115,7 @@ ENV CMAKE=/usr/bin/cmake
 ENV PULP_SDK_HOME=/app/install/pulp-sdk
 ENV LLVM_INSTALL_DIR=/app/install/llvm
 ENV SNITCH_HOME=/app/install/snitch_cluster
+ENV GVSOC_HOME=/app/install/gvsoc
 ENV MEMPOOL_HOME=/app/install/mempool
 ENV PATH=/app/install/qemu/bin:/app/install/banshee:$PATH
 ENV PATH="/root/.cargo/bin:${PATH}"
