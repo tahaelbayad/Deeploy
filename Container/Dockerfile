@@ -145,5 +145,6 @@ pip install -r requirements.txt
 
 # Copy pre-built toolchains and emulators
 COPY --from=builder /app/install ./install
+RUN pip install -r ./install/gvsoc/gapy/requirements.txt && pip install -r ./install/gvsoc/core/requirements.txt
 COPY --from=builder /root/.cargo/bin/banshee /root/.cargo/bin/banshee
 COPY --from=builder /app/riscv-llvm ./install/riscv-llvm
