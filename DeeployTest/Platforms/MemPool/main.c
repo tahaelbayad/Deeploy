@@ -39,7 +39,7 @@
 #include "testinputs.h"
 #include "testoutputs.h"
 
-#ifndef SIMULATORS
+#ifndef BANSHEE_SIMULATION
 dump(timer_cycle, 0);
 dump(timer_instr, 1);
 dump(expected, 2);
@@ -61,7 +61,7 @@ int main() {
 
   mempool_timer_t instr_init, instr_end;
   mempool_timer_t timer_init, timer_end;
-#ifdef SIMULATORS
+#ifdef BANSHEE_SIMULATION
   uint32_t const num_cores = NUM_THREADS;
 #else
   uint32_t const num_cores = mempool_get_core_count();
@@ -72,7 +72,7 @@ int main() {
   // Initialize synchronization variables
   mempool_barrier_init(core_id, num_cores);
 
-#ifdef SIMULATORS
+#ifdef BANSHEE_SIMULATION
   if (core_id == num_cores - 1) {
     printf("Network running on %ld of %ld cores\r\n", num_cores,
            mempool_get_core_count());
@@ -82,7 +82,7 @@ int main() {
   // Wait until initialization is done
   mempool_barrier(num_cores);
 
-#ifdef SIMULATORS
+#ifdef BANSHEE_SIMULATION
   if (core_id == 0) {
     printf("Init network...\r\n");
   }
@@ -96,7 +96,7 @@ int main() {
   mempool_barrier(num_cores);
 
   if (core_id == 0) {
-#if SIMULATORS
+#if BANSHEE_SIMULATION
     for (uint32_t buf = 0; buf < DeeployNetwork_num_inputs; buf++) {
       memcpy(DeeployNetwork_inputs[buf], testInputVector[buf],
              DeeployNetwork_inputs_bytes[buf]);
@@ -115,7 +115,7 @@ int main() {
   // Wait until initialization is done
   mempool_barrier(num_cores);
 
-#ifdef SIMULATORS
+#ifdef BANSHEE_SIMULATION
   if (core_id == 0) {
     for (uint32_t buf = 0; buf < DeeployNetwork_num_inputs; buf++) {
       printf("testInputVector%d @ %p\r\n", buf, testInputVector[buf]);
@@ -155,7 +155,7 @@ int main() {
   int32_t diff;
   int32_t expected, actual;
 
-#ifdef SIMULATORS
+#ifdef BANSHEE_SIMULATION
   uint32_t tot = 0;
   // Sequential part executed by all cores
   if (core_id != 0) {

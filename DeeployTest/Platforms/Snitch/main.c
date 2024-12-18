@@ -40,7 +40,7 @@ int main(void) {
   uint32_t core_id = snrt_global_core_idx();
   uint32_t compute_core_id = snrt_global_compute_core_idx();
 
-#ifdef SIMULATORS
+#ifdef EMULATORS
   uint32_t const num_compute_cores = (NUM_CORES - 1);
 #else
   uint32_t const num_compute_cores = snrt_global_compute_core_num();
@@ -98,23 +98,23 @@ int main(void) {
 
   snrt_cluster_hw_barrier();
 
-#ifndef SIMULATORS
+#ifndef EMULATORS
   if (snrt_is_dm_core()) {
     ResetTimer();
     StartTimer();
   }
-#endif // SIMULATORS
+#endif // EMULATORS
 
   RunNetwork(compute_core_id, num_compute_cores);
 
   uint32_t runtimeCycles = 0;
-#ifndef SIMULATORS
+#ifndef EMULATORS
   if (snrt_is_dm_core()) {
     runtimeCycles = getCycles();
     DUMP(runtimeCycles);
     StopTimer();
   }
-#endif // SIMULATORS
+#endif // EMULATORS
 
   snrt_cluster_hw_barrier();
 
