@@ -15,6 +15,9 @@ OPTION(gvsoc_simulation "adapt preprocessor macro for gvsoc simulation" OFF)
 if(banshee_simulation OR gvsoc_simulation)
   add_compile_definitions(BANSHEE_SIMULATION)
 endif()
+if(gvsoc_simulation)
+	add_compile_definitions(GVSOC_SIMULATION)
+endif()
 
 #########################
 ##  Utility Functions  ##
