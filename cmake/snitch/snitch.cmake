@@ -1,5 +1,5 @@
 set(SNITCH_HOME $ENV{SNITCH_HOME})
-set(GVSOC_HOME $ENV{GVSOC_HOME})
+set(GVSOC_INSTALL_DIR $ENV{GVSOC_INSTALL_DIR})
 set(SNITCH_RUNTIME_HOME ${SNITCH_HOME}/sw/snRuntime)
 
 add_compile_definitions(
@@ -25,9 +25,9 @@ endmacro()
 
 macro(add_gvsoc_simulation name)
 	add_custom_target(gvsoc_${name}
-	WORKING_DIRECTORY ${GVSOC_HOME}
+	WORKING_DIRECTORY ${GVSOC_INSTALL_DIR}
 	DEPENDS ${name}
-	COMMAND ./install/bin/gvsoc --target=pulp.snitch.snitch_cluster_single --binary ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${name} image flash run 
+	COMMAND ./bin/gvsoc --target=pulp.snitch.snitch_cluster_single --binary ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${name} image flash run 
 	COMMENT "Simulating deeploytest with gvsoc"
 	POST_BUILD
 	USES_TERMINAL

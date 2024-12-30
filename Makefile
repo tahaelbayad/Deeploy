@@ -76,7 +76,7 @@ echo-bash:
 	@echo "TL/DR: add these lines to run ~/.bashrc"
 	@echo "export PULP_SDK_HOME=${PULP_SDK_INSTALL_DIR}"
 	@echo "export SNITCH_HOME=${SNITCH_INSTALL_DIR}"
-	@echo "export GVSOC_HOME=${GVSOC_INSTALL_DIR}"
+	@echo "export GVSOC_INSTALL_DIR=${GVSOC_INSTALL_DIR}"
 	@echo "export LLVM_INSTALL_DIR=${LLVM_INSTALL_DIR}"
 	@echo "export PULP_RISCV_GCC_TOOLCHAIN=/PULP_SDK_IS_A_MESS"
 	@echo "export MEMPOOL_HOME=${MEMPOOL_INSTALL_DIR}"
@@ -293,10 +293,8 @@ ${TOOLCHAIN_DIR}/gvsoc:
 	pip install -r core/requirements.txt && pip install -r gapy/requirements.txt
 
 ${GVSOC_INSTALL_DIR}: ${TOOLCHAIN_DIR}/gvsoc
-	mkdir -p ${GVSOC_INSTALL_DIR}
-	cp -r ${TOOLCHAIN_DIR}/gvsoc/ ${GVSOC_INSTALL_DIR}/../
-	cd ${GVSOC_INSTALL_DIR} && \
-	make all TARGETS=pulp.snitch.snitch_cluster_single 
+	cd ${TOOLCHAIN_DIR}/gvsoc && \
+	make all TARGETS=pulp.snitch.snitch_cluster_single INSTALLDIR=${GVSOC_INSTALL_DIR}
 
 gvsoc: ${GVSOC_INSTALL_DIR}
 
