@@ -22,7 +22,7 @@ jobs:
           submodules: recursive
       - name: Build Deeploy
         run: pip install -e .
-      - name: Run Test
+      - name: Run Tests on Banshee
         run: |
           testNames="${{ inputs.test-names }}"
           cd DeeployTest
@@ -32,4 +32,15 @@ jobs:
               python testRunner_snitch.py -t Tests/$testName --simulator=banshee --cores=${{ inputs.num-cores }} --toolchain_install_dir /app/install/riscv-llvm/
             fi
           done
+      - name: Run Tests on GVSOC
+        run: |
+          testNames="${{ inputs.test-names }}"
+          cd DeeployTest
+          echo "$testNames" | while IFS= read -r testName; do
+            if [[ -n "$testName" ]]; then
+              echo "Running test: $testName"
+              python testRunner_snitch.py -t Tests/$testName --simulator=gvsoc --cores=${{ inputs.num-cores }} --toolchain_install_dir /app/install/riscv-llvm/
+            fi
+          done
         shell: bash
+      
