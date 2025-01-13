@@ -104,9 +104,6 @@ jobs:
         TestRQAdd
         testRQGEMMTransB
       num-cores: 9
-      simulators: |
-        banshee
-        gvsoc
 
   snitch-kernels-tiled-singlebuffer-L2:
     uses: ./.github/workflows/TestRunnerTiledSnitchSequential.yml
@@ -134,9 +131,6 @@ jobs:
             "L1": [5000, 10000]
           }
         ]
-      simulators: |
-        banshee
-        gvsoc
 
   ### Mempool Tests ###
   mempool-kernels:
