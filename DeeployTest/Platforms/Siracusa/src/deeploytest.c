@@ -103,7 +103,8 @@ void main(void) {
       compbuf = DeeployNetwork_outputs[buf];
     }
 
-    for (int i = 0; i < DeeployNetwork_outputs_bytes[buf] / sizeof(float32_t); i++) {
+    for (int i = 0; i < DeeployNetwork_outputs_bytes[buf] / sizeof(float32_t);
+         i++) {
       tot_tested++;
       expected_float = ((float32_t *)testOutputVector[buf])[i];
       actual_float = ((float32_t *)compbuf)[i];

@@ -138,11 +138,12 @@ int main(void) {
     for (uint32_t buf = 0; buf < DeeployNetwork_num_outputs; buf++) {
 
       tot += DeeployNetwork_outputs_bytes[buf] / sizeof(float32_t);
-      for (uint32_t i = 0; i < DeeployNetwork_outputs_bytes[buf] / sizeof(float32_t); i++) {
+      for (uint32_t i = 0;
+           i < DeeployNetwork_outputs_bytes[buf] / sizeof(float32_t); i++) {
         expected = ((float32_t *)testOutputVector[buf])[i];
         actual = ((float32_t *)DeeployNetwork_outputs[buf])[i];
         diff = expected - actual;
-        
+
         if (diff < -1e-5 || diff > 1e-5) {
           tot_err += 1;
 #ifndef CI
@@ -163,7 +164,7 @@ int main(void) {
         expected = ((char *)testOutputVector[buf])[i];
         actual = ((char *)DeeployNetwork_outputs[buf])[i];
         diff = expected - actual;
-        if(diff){
+        if (diff) {
           tot_err += 1;
 #ifndef CI
           printf("Expected: %4d  ", expected);

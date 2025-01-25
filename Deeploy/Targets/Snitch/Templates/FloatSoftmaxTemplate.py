@@ -24,17 +24,21 @@
 # limitations under the License.
 
 from typing import Dict, List, Tuple
+
 from Deeploy.DeeployTypes import NetworkContext, NodeTemplate, OperatorRepresentation
 
+
 class FloatSoftmaxTemplate(NodeTemplate):
+
     def __init__(self, templateStr):
         super().__init__(templateStr)
+
     def alignToContext(self, ctxt: NetworkContext,
                        operatorRepresentation: OperatorRepresentation) -> Tuple[NetworkContext, Dict, List[str]]:
-        
+
         data_in = ctxt.lookup(operatorRepresentation["data_in"])
         operatorRepresentation["batch_size"] = data_in.shape[0]
-        operatorRepresentation["seq_len"]  = data_in.shape[1]
+        operatorRepresentation["seq_len"] = data_in.shape[1]
         operatorRepresentation["input_samples"] = data_in.shape[2]
 
         operatorRepresentation["kernelName"] = "Softmax_fp32"

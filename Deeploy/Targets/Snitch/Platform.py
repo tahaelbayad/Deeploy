@@ -34,8 +34,8 @@ from Deeploy.Targets.Generic.Bindings import BasicGatherBindings, BasicLayerNorm
     BasicPad1DBindings, BasicPad2DBindings, BasicReshapeBindings, BasicRQIntegerDivBinding
 from Deeploy.Targets.Generic.Layers import AddLayer, GatherLayer, GEMMLayer, MatMulLayer, PadLayer, ReshapeLayer, \
     RQGEMMLayer, RQIntegerDivLayer, iLayerNormLayer, iNoNormLayer, iSoftmaxLayer
-from Deeploy.Targets.Generic.Parsers import AddParser, GatherParser, MatMulParser, Pad1DParser, Pad2DParser, \
-    RQAddParser, RQIntegerDivParser, UnsqueezeParser, iLayerNormParser, iNoNormParser, iSoftmaxParser, FloatSoftmaxParser
+from Deeploy.Targets.Generic.Parsers import AddParser, FloatSoftmaxParser, GatherParser, MatMulParser, Pad1DParser, \
+    Pad2DParser, RQAddParser, RQIntegerDivParser, UnsqueezeParser, iLayerNormParser, iNoNormParser, iSoftmaxParser
 from Deeploy.Targets.Generic.Templates import AllocateTemplate as BasicAllocateTemplate
 from Deeploy.Targets.Generic.TopologyOptimizationPasses.Passes import AddRequantMergePass, GEMMRequantMergePass, \
     IntegerDivRequantMergePass, MergeConstAddAndRequantPass, MergeTrueIntegerDivRequantShiftPass, RQSSplitPass, \
@@ -73,7 +73,7 @@ SnitchMapping = {
     'Gemm': GEMMLayer([GemmMapper]),
     'RQGemm': RQGEMMLayer([RqGemmMapper]),
     'iSoftmax': iSoftmaxLayer([iSoftmaxMapper]),
-    'Softmax' : iSoftmaxLayer([SoftmaxMapper]),
+    'Softmax': iSoftmaxLayer([SoftmaxMapper]),
     'iNoNorm': iNoNormLayer([iNoNormMapper]),
     'iLayerNorm': iLayerNormLayer([iLayerNormMapper]),
     'RequantizedAdd': AddLayer([RQAddMapper]),

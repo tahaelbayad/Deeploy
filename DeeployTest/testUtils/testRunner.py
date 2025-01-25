@@ -323,7 +323,7 @@ class TestRunner():
             self.cmake_args += " -D gvsoc_simulation=ON"
         else:
             self.cmake_args += " -D gvsoc_simulation=OFF"
-        
+
         if self._name_test == 'FloatGEMM' or self._name_test == 'FloatSoftmax':
             self.cmake_args += " -D isFloat=ON"
         else:

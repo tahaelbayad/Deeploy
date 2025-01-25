@@ -540,8 +540,10 @@ class ReduceSumParser(ReduceParser):
         newCtxt, ret = super().parseNodeCtxt(ctxt, node, channels_first)
         return newCtxt, ret
 
+
     # temporary, ask victor how to add n_levels as node attribute
 class FloatSoftmaxParser(NodeParser):
+
     def __init__(self):
         super().__init__()
 
@@ -549,7 +551,7 @@ class FloatSoftmaxParser(NodeParser):
 
         ret = all([len(node.inputs) == 1, len(node.outputs) == 1])
         return ret
-        
+
     def parseNodeCtxt(self,
                       ctxt: NetworkContext,
                       node: gs.Node,
@@ -563,6 +565,7 @@ class FloatSoftmaxParser(NodeParser):
         self.operatorRepresentation['lastDimLength'] = data_in.shape[-1]
 
         return ctxt, True
+
 
 class SoftmaxParser(NodeParser):
 

@@ -29,18 +29,18 @@ from Deeploy.AbstractDataTypes import PointerClass
 from Deeploy.CommonExtensions.CodeTransformationPasses.Closure import ClosureGeneration, MemoryAwareClosureGeneration
 from Deeploy.CommonExtensions.CodeTransformationPasses.MemoryAllocation import ArgumentStructGeneration, \
     MemoryManagementGeneration
-from Deeploy.CommonExtensions.DataTypes import int8_t, int32_t, uint8_t, float32_t
+from Deeploy.CommonExtensions.DataTypes import float32_t, int8_t, int32_t, uint8_t
 from Deeploy.DeeployTypes import CodeTransformation, NodeBinding
 from Deeploy.FutureExtension.CodeTransformationPasses.FutureCodeTransformation import FutureGeneration
 from Deeploy.Targets.Generic.Templates import iNoNormTemplate
 from Deeploy.Targets.Generic.TypeCheckers import AddChecker, GEMMChecker, RQAddChecker, SoftmaxChecker, iNoNormChecker
 from Deeploy.Targets.Snitch.CodeTransformationPasses import SnitchClusterTiling, SnitchCoreFilterPass, \
     SnitchProfileExecutionBlockPass, SnitchSynchCoresPass
-from Deeploy.Targets.Snitch.Templates import AddTemplate, RQAddTemplate, iSoftmaxTemplate 
+from Deeploy.Targets.Snitch.Templates import AddTemplate, RQAddTemplate, iSoftmaxTemplate
+from Deeploy.Targets.Snitch.Templates.FloatGemmTemplate import SnitchFloatGemm_Template
+from Deeploy.Targets.Snitch.Templates.FloatSoftmaxTemplate import FloatSoftmax_Template
 from Deeploy.Targets.Snitch.Templates.GemmTemplate import SnitchGemm_Template
 from Deeploy.Targets.Snitch.Templates.RqGemmTemplate import SnitchRqGemm_Template
-from Deeploy.Targets.Snitch.Templates.FloatSoftmaxTemplate import FloatSoftmax_Template
-from Deeploy.Targets.Snitch.Templates.FloatGemmTemplate import SnitchFloatGemm_Template
 from Deeploy.TilingExtension.CodeTransformationPasses.TilingVariableReplacement import TilingVariableReplacement
 
 TilingCallClosure = partial(ClosureGeneration, closureSuffix = "_tiling_closure")
@@ -73,7 +73,7 @@ SnitchiSoftmaxBindings = [
                 TiledTransformer) for _type in [int8_t, uint8_t]
 ] + [
     NodeBinding(SoftmaxChecker([PointerClass(float32_t)], [PointerClass(float32_t)]), FloatSoftmax_Template,
-                TiledTransformer) 
+                TiledTransformer)
 ]
 
 SnitchiNoNormBindings = [
@@ -94,7 +94,8 @@ SnitchGemmBindings = [
     NodeBinding(
         GEMMChecker([PointerClass(int8_t), PointerClass(int8_t),
                      PointerClass(int32_t)], [PointerClass(int32_t)]), SnitchGemm_Template, TiledTransformer)
-] + [ NodeBinding(
+] + [
+    NodeBinding(
         GEMMChecker([PointerClass(float32_t), PointerClass(float32_t),
                      PointerClass(float32_t)], [PointerClass(float32_t)]), SnitchFloatGemm_Template, TiledTransformer)
 ]
