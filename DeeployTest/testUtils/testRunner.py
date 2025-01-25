@@ -323,6 +323,11 @@ class TestRunner():
             self.cmake_args += " -D gvsoc_simulation=ON"
         else:
             self.cmake_args += " -D gvsoc_simulation=OFF"
+        
+        if self._name_test == 'TestiNoNorm':
+            self.cmake_args += " -D isiNoNorm=ON"
+        else:
+            self.cmake_args += " -D isiNoNorm=OFF"
 
         command = f"$CMAKE -D TOOLCHAIN={self._args.toolchain} -D TOOLCHAIN_INSTALL_DIR={self._dir_toolchain} -D GENERATED_SOURCE={self._dir_gen} -D platform={self._platform} {self.cmake_args} -B {self._dir_build} -D TESTNAME={self._name_test} .."
 

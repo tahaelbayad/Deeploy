@@ -64,6 +64,14 @@ void Gemm_s8_row_parallel(int8_t const *__restrict__ pSrcA,
                           int32_t *__restrict__ pDstY, uint32_t M, uint32_t N,
                           uint32_t O, int32_t alpha, int32_t beta);
 
+
+void gemm_fp32_opt(uint32_t M, uint32_t N, uint32_t K, float32_t* A, uint32_t ldA,
+                   float32_t* B, uint32_t ldB, float32_t* C, uint32_t ldC, float32_t* Y,
+                   const uint32_t* BETA, uint32_t setup_SSR);
+
+
+
+
 /*
  * General Matrix Multiplication
  * transposed A    = no

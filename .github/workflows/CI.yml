@@ -104,6 +104,8 @@ jobs:
         testRQGEMM
         TestRQAdd
         testRQGEMMTransB
+        FloatSoftmax
+        FloatGEMM
       num-cores: 9
       simulators: |
         banshee
@@ -131,7 +133,16 @@ jobs:
             "L1": [2000, 5000]
           },
           {
+            "name": "FloatSoftmax",
+            "L1": [2000, 5000]
+          },
+
+          {
             "name": "TestRQAdd",
+            "L1": [5000, 10000]
+          },
+          {
+            "name": "FloatGEMM",
             "L1": [5000, 10000]
           }
         ]
