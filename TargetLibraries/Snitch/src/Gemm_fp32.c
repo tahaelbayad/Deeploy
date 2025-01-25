@@ -1,6 +1,5 @@
 #include "DeeploySnitchMath.h"
 
-// n is o and k is n
 void gemm_fp32_opt(uint32_t M, uint32_t N, uint32_t K, float32_t* A, uint32_t ldA,
                    float32_t* B, uint32_t ldB, float32_t* C, uint32_t ldC, float32_t* Y,
                    const uint32_t* BETA, uint32_t setup_SSR) {
@@ -36,7 +35,7 @@ void gemm_fp32_opt(uint32_t M, uint32_t N, uint32_t K, float32_t* A, uint32_t ld
 
     //SSR start address need to be configured each time
      
-    snrt_ssr_read(SNRT_SSR_DM0, SNRT_SSR_4D, A);
+    snrt_ssr_read(SNRT_SSR_DM0, SNRT_SSR_4D, A );
     snrt_ssr_read(SNRT_SSR_DM1, SNRT_SSR_4D, B);
     snrt_ssr_enable();
    
@@ -50,17 +49,17 @@ void gemm_fp32_opt(uint32_t M, uint32_t N, uint32_t K, float32_t* A, uint32_t ld
         uint32_t n = 0;
         for (uint32_t n0 = 0; n0 < N / unroll; n0++) {
             float c[unroll];
-       
+            /*
             // Load intermediate result
             if (*BETA) {
-                c[0] = C[  m * ldC + n + 0];
-                c[1] = C[  m * ldC + n + 1];
-                c[2] = C[  m * ldC + n + 2];
-                c[3] = C[  m * ldC + n + 3];
-                c[4] = C[  m * ldC + n + 4];
-                c[5] = C[  m * ldC + n + 5];
-                c[6] = C[  m * ldC + n + 6];
-                c[7] = C[ m * ldC + n + 7];
+                c[0] = C[m * ldC + n + 0];
+                c[1] = C[m * ldC + n + 1];
+                c[2] = C[m * ldC + n + 2];
+                c[3] = C[ m * ldC + n + 3];
+                c[4] = C[m * ldC + n + 4];
+                c[5] = C[m * ldC + n + 5];
+                c[6] = C[m * ldC + n + 6];
+                c[7] = C[m * ldC + n + 7];
             } else {
                 c[0] = 0.0;
                 c[1] = 0.0;
@@ -90,26 +89,27 @@ void gemm_fp32_opt(uint32_t M, uint32_t N, uint32_t K, float32_t* A, uint32_t ld
             
             
             // Store results back
-            Y[ m * ldC + n + 0] = c[0];
-            Y[ m * ldC + n + 1] = c[1];
-            Y[  m * ldC + n + 2] = c[2];
-            Y[ m * ldC + n + 3] = c[3];
-            Y[  m * ldC + n + 4] = c[4];
-            Y[  m * ldC + n + 5] = c[5];
-            Y[  m * ldC + n + 6] = c[6];
-            Y[  m * ldC + n + 7] = c[7];
+            Y[m * ldC + n + 0] = c[0];
+            Y[m * ldC + n + 1] = c[1];
+            Y[m * ldC + n + 2] = c[2];
+            Y[m * ldC + n + 3] = c[3];
+            Y[m * ldC + n + 4] = c[4];
+            Y[m * ldC + n + 5] = c[5];
+            Y[m * ldC + n + 6] = c[6];
+            Y[m * ldC + n + 7] = c[7];
             n += unroll;
+            */
 
         }
 
         // Clean up of leftover columns
         snrt_ssr_disable();
         for (; n < N; n++) {
-            float32_t c = C[ m * ldC + n];
+            float32_t c = C[m * ldC + n];
             for (uint32_t k = 0; k < K; k++) {
-                c += A[ k + m * ldA] * B[k + n * ldB];
+                c += A[k + m * ldA] * B[k + n * ldB];
             }
-            Y[ m * ldC + n] = c;
+            Y[m * ldC + n] = c;
             
             }
         snrt_ssr_enable();
