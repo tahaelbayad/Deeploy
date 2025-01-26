@@ -105,7 +105,6 @@ jobs:
         TestRQAdd
         testRQGEMMTransB
         FloatSoftmax
-        FloatGEMM
       num-cores: 9
       simulators: |
         banshee

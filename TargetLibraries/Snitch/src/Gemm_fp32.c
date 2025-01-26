@@ -2,9 +2,9 @@
 #include "Gemm.h"
 
 void gemm_fp32_transB_opt(uint32_t M, uint32_t N, uint32_t K, float32_t *A,
-                   uint32_t ldA, float32_t *B, uint32_t ldB, float32_t *C,
-                   uint32_t ldC, float32_t *Y, uint32_t BETA,
-                   uint32_t setup_SSR) {
+                          uint32_t ldA, float32_t *B, uint32_t ldB,
+                          float32_t *C, uint32_t ldC, float32_t *Y,
+                          uint32_t BETA, uint32_t setup_SSR) {
 
   uint32_t compute_id = snrt_global_compute_core_idx();
   uint32_t A_offset = K * compute_id;
@@ -103,10 +103,9 @@ void gemm_fp32_transB_opt(uint32_t M, uint32_t N, uint32_t K, float32_t *A,
     snrt_ssr_disable();
     for (; n < N; n++) {
       float32_t c;
-      if(BETA){
+      if (BETA) {
         c = C[C_offset + m * ldC + n];
-      }
-      else{
+      } else {
         c = 0.0;
       }
       for (uint32_t k = 0; k < K; k++) {
@@ -119,11 +118,10 @@ void gemm_fp32_transB_opt(uint32_t M, uint32_t N, uint32_t K, float32_t *A,
   snrt_ssr_disable();
 }
 
-
-
-void gemm_fp32_opt(uint32_t M, uint32_t N, uint32_t K, float32_t *A, uint32_t ldA,
-               float32_t *B, uint32_t ldB, float32_t *C, uint32_t ldC,
-               float32_t *Y, uint32_t *BETA, uint32_t setup_SSR) {
+void gemm_fp32_opt(uint32_t M, uint32_t N, uint32_t K, float32_t *A,
+                   uint32_t ldA, float32_t *B, uint32_t ldB, float32_t *C,
+                   uint32_t ldC, float32_t *Y, uint32_t *BETA,
+                   uint32_t setup_SSR) {
   uint32_t compute_id = snrt_global_compute_core_idx();
   uint32_t A_offset = K * compute_id;
   uint32_t C_offset = N * compute_id;
@@ -144,7 +142,7 @@ void gemm_fp32_opt(uint32_t M, uint32_t N, uint32_t K, float32_t *A, uint32_t ld
     // Second matrix is not stored in transposed format
     const uint32_t ssr1_b[4] = {unroll, K, N / unroll, M};
     const uint32_t ssr1_i[4] = {sizeof(float32_t), sizeof(float32_t) * ldB,
-                                sizeof(float32_t)* unroll, 0};
+                                sizeof(float32_t) * unroll, 0};
 
     snrt_ssr_loop_3d(SNRT_SSR_DM0, ssr0_b[1], ssr0_b[2], ssr0_b[3], ssr0_i[1],
                      ssr0_i[2], ssr0_i[3]);
@@ -221,10 +219,9 @@ void gemm_fp32_opt(uint32_t M, uint32_t N, uint32_t K, float32_t *A, uint32_t ld
     snrt_ssr_disable();
     for (; n < N; n++) {
       float32_t c;
-      if(BETA){
+      if (BETA) {
         c = C[C_offset + m * ldC + n];
-      }
-      else{
+      } else {
         c = 0.0;
       }
       for (uint32_t k = 0; k < K; k++) {

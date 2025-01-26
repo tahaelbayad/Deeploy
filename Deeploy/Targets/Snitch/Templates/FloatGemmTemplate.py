@@ -8,7 +8,7 @@ class SnitchFloatGemmTemplate(NodeTemplate):
     def alignToContext(self, ctxt: NetworkContext,
                        operatorRepresentation: OperatorRepresentation) -> Tuple[NetworkContext, Dict, List[str]]:
 
-        if(operatorRepresentation['transB']):
+        if (operatorRepresentation['transB']):
             operatorRepresentation['kernelName'] = 'gemm_fp32_transB_opt'
         else:
             operatorRepresentation['kernelName'] = 'gemm_fp32_opt'
