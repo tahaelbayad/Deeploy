@@ -43,7 +43,7 @@ class FloatSoftmaxTemplate(NodeTemplate):
 
         operatorRepresentation["kernelName"] = "Softmax_fp32"
 
-        # softmax_fp32_opt kernel isn't supported by the current compiler used for deeploy
+        # softmax_fp32_opt kernel isn't supported by the current compiler
         # operatorRepresentation["kernelName"] = "Softmax_fp32_opt"
 
         return ctxt, operatorRepresentation, []

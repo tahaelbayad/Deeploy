@@ -1,5 +1,7 @@
 #include "DeeploySnitchMath.h"
 
+
+
 void Softmax_fp32(float32_t *input, float32_t *output, int32_t ldI,
                   int32_t batch_offset, int32_t batch_size, int32_t seq_len,
                   int32_t input_samples) {
@@ -31,6 +33,11 @@ void Softmax_fp32(float32_t *input, float32_t *output, int32_t ldI,
   }
 }
 
+
+
+
+// Softmax_fp32_opt currently not supported by current compiler
+/*
 typedef __fp16 v2f16 __attribute__((vector_size(4)));
 void Softmax_fp32_opt(float *input, float *output, int32_t ldI,
                       int32_t batch_offset, int32_t batch_size, int32_t seq_len,
@@ -72,3 +79,4 @@ void Softmax_fp32_opt(float *input, float *output, int32_t ldI,
     }
   }
 }
+*/
