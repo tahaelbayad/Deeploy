@@ -540,33 +540,6 @@ class ReduceSumParser(ReduceParser):
         newCtxt, ret = super().parseNodeCtxt(ctxt, node, channels_first)
         return newCtxt, ret
 
-
-    # temporary, ask victor how to add n_levels as node attribute
-class FloatSoftmaxParser(NodeParser):
-
-    def __init__(self):
-        super().__init__()
-
-    def parseNode(self, node: gs.Node) -> bool:
-
-        ret = all([len(node.inputs) == 1, len(node.outputs) == 1])
-        return ret
-
-    def parseNodeCtxt(self,
-                      ctxt: NetworkContext,
-                      node: gs.Node,
-                      channels_first: bool = True) -> Tuple[NetworkContext, bool]:
-
-        data_in = ctxt.lookup(node.inputs[0].name)
-        data_out = ctxt.lookup(node.outputs[0].name)
-        self.operatorRepresentation['data_in'] = data_in.name
-        self.operatorRepresentation['data_out'] = data_out.name
-        self.operatorRepresentation['size'] = np.prod(data_in.shape)
-        self.operatorRepresentation['lastDimLength'] = data_in.shape[-1]
-
-        return ctxt, True
-
-
 class SoftmaxParser(NodeParser):
 
     def __init__(self):
@@ -575,10 +548,6 @@ class SoftmaxParser(NodeParser):
     def parseNode(self, node: gs.Node) -> bool:
 
         ret = all([len(node.inputs) == 1, len(node.outputs) == 1])
-
-        if ret:
-            self.operatorRepresentation['n_levels'] = int(node.attrs['n_levels'].values)
-
         return ret
 
     def parseNodeCtxt(self,
@@ -617,6 +586,7 @@ class iSoftmaxParser(SoftmaxParser):
             self.operatorRepresentation['coeffB'] = int(node.attrs['coeffB'].values)
             self.operatorRepresentation['coeffC'] = int(node.attrs['coeffC'].values)
             self.operatorRepresentation['log2'] = int(node.attrs['log2'].values)
+            self.operatorRepresentation['n_levels'] = int(node.attrs['n_levels'].values)
 
         return wellFormed
 

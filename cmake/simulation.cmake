@@ -10,11 +10,6 @@ set(num_threads  1  CACHE STRING "Number of active cores")
 
 set(banshee_stack_size 16777216 CACHE STRING "Stack size of banshee threads")
 
-OPTION(isFloat "distinguish float and int kernel in deeploytest" OFF)
-if(isFloat)
-  add_compile_definitions(ISFLOAT)
-endif()
-
 OPTION(banshee_simulation "Optimize binary for banshee simulation" OFF)
 OPTION(gvsoc_simulation "adapt preprocessor macro for gvsoc simulation" OFF)
 if(banshee_simulation)

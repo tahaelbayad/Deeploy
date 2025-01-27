@@ -37,9 +37,8 @@ class FloatSoftmaxTemplate(NodeTemplate):
                        operatorRepresentation: OperatorRepresentation) -> Tuple[NetworkContext, Dict, List[str]]:
 
         data_in = ctxt.lookup(operatorRepresentation["data_in"])
-        operatorRepresentation["batch_size"] = data_in.shape[0]
-        operatorRepresentation["seq_len"] = data_in.shape[1]
-        operatorRepresentation["input_samples"] = data_in.shape[2]
+        operatorRepresentation["seq_len"] = data_in.shape[2]
+        operatorRepresentation["input_samples"] = data_in.shape[-1]
 
         operatorRepresentation["kernelName"] = "Softmax_fp32"
 
@@ -50,11 +49,12 @@ class FloatSoftmaxTemplate(NodeTemplate):
 
 
 FloatSoftmaxTemplateStr = r"""
+    uint32_t batch_size = ${size} / ${lastDimLength};
     uint32_t compute_num = snrt_cluster_compute_core_num();
     int32_t ldI = compute_num * ${input_samples};
     int32_t batch_offset = ${seq_len} * ${input_samples};
                                        
-    ${kernelName}(${data_in}, ${data_out}, ldI, batch_offset, ${batch_size}, ${seq_len}, ${input_samples});
+    ${kernelName}(${data_in}, ${data_out}, ldI, batch_offset, batch_size, ${seq_len}, ${input_samples});
 """
 
 FloatSoftmax_Template = FloatSoftmaxTemplate(FloatSoftmaxTemplateStr)

@@ -34,7 +34,7 @@ from Deeploy.Targets.Generic.Bindings import BasicGatherBindings, BasicLayerNorm
     BasicPad1DBindings, BasicPad2DBindings, BasicReshapeBindings, BasicRQIntegerDivBinding
 from Deeploy.Targets.Generic.Layers import AddLayer, GatherLayer, GEMMLayer, MatMulLayer, PadLayer, ReshapeLayer, \
     RQGEMMLayer, RQIntegerDivLayer, iLayerNormLayer, iNoNormLayer, iSoftmaxLayer
-from Deeploy.Targets.Generic.Parsers import AddParser, FloatSoftmaxParser, GatherParser, MatMulParser, Pad1DParser, \
+from Deeploy.Targets.Generic.Parsers import AddParser, SoftmaxParser, GatherParser, MatMulParser, Pad1DParser, \
     Pad2DParser, RQAddParser, RQIntegerDivParser, UnsqueezeParser, iLayerNormParser, iNoNormParser, iSoftmaxParser
 from Deeploy.Targets.Generic.Templates import AllocateTemplate as BasicAllocateTemplate
 from Deeploy.Targets.Generic.TopologyOptimizationPasses.Passes import AddRequantMergePass, GEMMRequantMergePass, \
@@ -58,7 +58,7 @@ MatMulMapper = NodeMapper(MatMulParser(), [BasicMatMulBinding])
 GemmMapper = NodeMapper(SnitchGEMMParser(), SnitchGemmTilingReadyBindings)
 RqGemmMapper = NodeMapper(SnitchRQGEMMParser(), SnitchRqGemmTilingReadyBindings)
 iSoftmaxMapper = NodeMapper(iSoftmaxParser(), SnitchiSoftmaxTilingReadyBindings)
-SoftmaxMapper = NodeMapper(FloatSoftmaxParser(), SnitchiSoftmaxTilingReadyBindings)
+SoftmaxMapper = NodeMapper(SoftmaxParser(), SnitchiSoftmaxTilingReadyBindings)
 iNoNormMapper = NodeMapper(iNoNormParser(), SnitchiNoNormTilingReadyBindings)
 iLayerNormMapper = NodeMapper(iLayerNormParser(), [BasicLayerNormBinding])
 RQAddMapper = NodeMapper(RQAddParser(), SnitchRQAddTilingReadyBindings)
