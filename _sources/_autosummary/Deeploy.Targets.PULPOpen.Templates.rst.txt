@@ -1,0 +1,48 @@
+Deeploy.Targets.PULPOpen.Templates
+==================================
+
+.. automodule:: Deeploy.Targets.PULPOpen.Templates
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+
+.. rubric:: Modules
+
+.. autosummary::
+   :toctree:
+   :template: custom-module-template.rst
+   :recursive:
+
+   AllocateTemplate
+   ConvTemplate
+   FreeTemplate
+   GEMMTemplate
+   MatrixVectorTemplate
+   MaxPool2DTemplate
+   MulTemplate
+   RQAddTemplate
+   RQSiHardswishTemplate
+   ReduceMeanTemplate
+   RequantShiftTemplate
+   SliceTemplate
+   TallGEMMTemplate
+   TransposeTemplate
+   UniformRequantShiftTemplate
+   iRMSNormTemplate
+   iSoftmaxTemplate
+

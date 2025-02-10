@@ -1,0 +1,57 @@
+Deeploy.TilingExtension.TilerExtension.TilerAwareDeployer
+=========================================================
+
+.. currentmodule:: Deeploy.TilingExtension.TilerExtension
+
+.. autoclass:: TilerAwareDeployer
+   :members:
+   :show-inheritance:
+   :inherited-members:
+
+   
+   
+   .. rubric:: Methods
+   .. automethod:: __init__
+
+   .. autosummary::
+   
+      ~TilerAwareDeployer.__init__
+      ~TilerAwareDeployer.backEnd
+      ~TilerAwareDeployer.bind
+      ~TilerAwareDeployer.codeTransform
+      ~TilerAwareDeployer.exportDeeployState
+      ~TilerAwareDeployer.frontEnd
+      ~TilerAwareDeployer.generateBufferAllocationCode
+      ~TilerAwareDeployer.generateBufferDeAllocationCode
+      ~TilerAwareDeployer.generateBufferInitializationCode
+      ~TilerAwareDeployer.generateEngineInitializationCode
+      ~TilerAwareDeployer.generateFunction
+      ~TilerAwareDeployer.generateGlobalDefinitionCode
+      ~TilerAwareDeployer.generateIOBufferInitializationCode
+      ~TilerAwareDeployer.generateIncludeString
+      ~TilerAwareDeployer.generateInferenceCode
+      ~TilerAwareDeployer.generateInferenceInitializationCode
+      ~TilerAwareDeployer.getParameterSize
+      ~TilerAwareDeployer.getTargetMemoryLevelMapping
+      ~TilerAwareDeployer.getTotalSize
+      ~TilerAwareDeployer.importDeeployState
+      ~TilerAwareDeployer.inputs
+      ~TilerAwareDeployer.lower
+      ~TilerAwareDeployer.midEnd
+      ~TilerAwareDeployer.numberOfOps
+      ~TilerAwareDeployer.outputs
+      ~TilerAwareDeployer.parse
+      ~TilerAwareDeployer.prepare
+      ~TilerAwareDeployer.tile
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~TilerAwareDeployer.worstCaseBufferSize
+   
+   

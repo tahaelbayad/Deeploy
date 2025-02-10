@@ -1,0 +1,32 @@
+Deeploy.Targets.PULPOpen.TileConstraints.MaxPoolTileConstraint.MaxPoolTileConstraint
+====================================================================================
+
+.. currentmodule:: Deeploy.Targets.PULPOpen.TileConstraints.MaxPoolTileConstraint
+
+.. autoclass:: MaxPoolTileConstraint
+   :members:
+   :show-inheritance:
+   :inherited-members:
+
+   
+   
+   .. rubric:: Methods
+   .. automethod:: __init__
+
+   .. autosummary::
+   
+      ~MaxPoolTileConstraint.__init__
+      ~MaxPoolTileConstraint.addGeometricalConstraint
+      ~MaxPoolTileConstraint.addPolicyConstraint
+      ~MaxPoolTileConstraint.constructSymbolicNodeRep
+      ~MaxPoolTileConstraint.extractBaseAddr
+      ~MaxPoolTileConstraint.getBaseAddr
+      ~MaxPoolTileConstraint.sanitizeTilingSchedule
+      ~MaxPoolTileConstraint.serializeTilingSolution
+      ~MaxPoolTileConstraint.wrapTilingSolution
+   
+   
+
+   
+   
+   

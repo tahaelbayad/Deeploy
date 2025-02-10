@@ -1,0 +1,35 @@
+Deeploy.TilingExtension.TilerExtension.Tiler
+============================================
+
+.. currentmodule:: Deeploy.TilingExtension.TilerExtension
+
+.. autoclass:: Tiler
+   :members:
+   :show-inheritance:
+   :inherited-members:
+
+   
+   
+   .. rubric:: Methods
+   .. automethod:: __init__
+
+   .. autosummary::
+   
+      ~Tiler.__init__
+      ~Tiler.computeTilingSchedule
+      ~Tiler.multiBufferStrategy
+      ~Tiler.propagateIOBufferStrategy
+      ~Tiler.setupModel
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Tiler.arenaName
+      ~Tiler.worstCaseBufferSize
+   
+   
