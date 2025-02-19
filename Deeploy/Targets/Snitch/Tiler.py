@@ -60,9 +60,9 @@ SnitchMatMulTileReadyBindings = TilingReadyNodeBindings(nodeBindings = SnitchMat
 SnitchTransposeTileReadyBindings = TilingReadyNodeBindings(nodeBindings = SnitchTransposeBindings,
                                                      tileConstraint = TransposeTileConstraint())
 
-# _BasicFlattenBindings = copy.deepcopy(BasicReshapeBindings)
-# for binding in _BasicFlattenBindings:
-#     binding.codeTransformer = CodeTransformation([MemoryPassthroughGeneration("L.*"), MemoryPassthroughGeneration()])
+_BasicFlattenBindings = copy.deepcopy(BasicReshapeBindings)
+for binding in _BasicFlattenBindings:
+    binding.codeTransformer = CodeTransformation([MemoryPassthroughGeneration("L.*"), MemoryPassthroughGeneration()])
 
-SnitchFlattenTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = BasicReshapeBindings,
+SnitchFlattenTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = _BasicFlattenBindings,
                                                           tileConstraint = NOPTileConstraint())
