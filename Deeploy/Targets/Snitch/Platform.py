@@ -25,17 +25,18 @@
 # limitations under the License.
 
 from typing import List
-
+import onnx_graphsurgeon as gs
 import numpy as np
-
+from Deeploy.MemoryLevelExtension.NetworkDeployers.MemoryLevelDeployer import MemoryPlatform, MemoryPlatformWrapper
 from Deeploy.DeeployTypes import ConstantBuffer, DeploymentEngine, DeploymentPlatform, NodeMapper, NodeTemplate, \
-    StructBuffer, TopologyOptimizer, TransientBuffer, VariableBuffer
+    StructBuffer, TopologyOptimizer, TransientBuffer, VariableBuffer, NetworkContext
+from Deeploy.MemoryLevelExtension.MemoryLevels import MemoryHierarchy, MemoryLevel
 from Deeploy.Targets.Generic.Bindings import BasicGatherBindings, BasicLayerNormBindings, BasicMatMulBindings, \
     BasicPad1DBindings, BasicPad2DBindings, BasicReshapeBindings, BasicRQIntegerDivBinding
 from Deeploy.Targets.Generic.Layers import AddLayer, GatherLayer, GEMMLayer, LayerNormLayer, MatMulLayer, PadLayer, \
-    ReshapeLayer, RQGEMMLayer, RQIntegerDivLayer, SoftmaxLayer, iNoNormLayer
+    ReshapeLayer, RQGEMMLayer, RQIntegerDivLayer, SoftmaxLayer, iNoNormLayer, TransposeLayer
 from Deeploy.Targets.Generic.Parsers import AddParser, GatherParser, MatMulParser, Pad1DParser, Pad2DParser, \
-    RQAddParser, RQIntegerDivParser, SoftmaxParser, UnsqueezeParser, iLayerNormParser, iNoNormParser, iSoftmaxParser
+    RQAddParser, RQIntegerDivParser, SoftmaxParser, UnsqueezeParser, iLayerNormParser, iNoNormParser, iSoftmaxParser, ReshapeParser, TransposeParser
 from Deeploy.Targets.Generic.Templates import AllocateTemplate as BasicAllocateTemplate
 from Deeploy.Targets.Generic.TopologyOptimizationPasses.Passes import AddRequantMergePass, GEMMRequantMergePass, \
     IntegerDivRequantMergePass, MergeConstAddAndRequantPass, MergeTrueIntegerDivRequantShiftPass, RQSSplitPass, \
@@ -45,7 +46,7 @@ from Deeploy.Targets.Snitch.Parsers import SnitchGEMMParser, SnitchRQGEMMParser
 from Deeploy.Targets.Snitch.Templates import AllocateTemplate, FreeTemplate
 from Deeploy.Targets.Snitch.Tiler import SnitchAddTileReadyBindings, SnitchGemmTilingReadyBindings, \
     SnitchiNoNormTilingReadyBindings, SnitchiSoftmaxTilingReadyBindings, SnitchRQAddTilingReadyBindings, \
-    SnitchRqGemmTilingReadyBindings
+    SnitchRqGemmTilingReadyBindings, SnitchMatMulTileReadyBindings, SnitchTransposeTileReadyBindings, SnitchFlattenTilingReadyBindings
 
 GatherMapper = NodeMapper(GatherParser(), BasicGatherBindings)
 Pad1DMapper = NodeMapper(Pad1DParser(), BasicPad1DBindings)
@@ -54,7 +55,7 @@ UnsqueezeMapper = NodeMapper(UnsqueezeParser(), BasicReshapeBindings)
 
 RQIntegerDivMapper = NodeMapper(RQIntegerDivParser(), [BasicRQIntegerDivBinding])
 
-MatMulMapper = NodeMapper(MatMulParser(), BasicMatMulBindings)
+MatMulMapper = NodeMapper(MatMulParser(), SnitchMatMulTileReadyBindings)
 GemmMapper = NodeMapper(SnitchGEMMParser(), SnitchGemmTilingReadyBindings)
 RqGemmMapper = NodeMapper(SnitchRQGEMMParser(), SnitchRqGemmTilingReadyBindings)
 iSoftmaxMapper = NodeMapper(iSoftmaxParser(), SnitchiSoftmaxTilingReadyBindings)
@@ -63,6 +64,8 @@ iNoNormMapper = NodeMapper(iNoNormParser(), SnitchiNoNormTilingReadyBindings)
 iLayerNormMapper = NodeMapper(iLayerNormParser(), BasicLayerNormBindings)
 RQAddMapper = NodeMapper(RQAddParser(), SnitchRQAddTilingReadyBindings)
 AddMapper = NodeMapper(AddParser(), SnitchAddTileReadyBindings)
+ReshapeMapper = NodeMapper(ReshapeParser(), SnitchFlattenTilingReadyBindings)
+TransposeMapper = NodeMapper(TransposeParser(), SnitchTransposeTileReadyBindings)
 
 SnitchMapping = {
     'RQIntegerDiv': RQIntegerDivLayer([RQIntegerDivMapper]),
@@ -78,6 +81,8 @@ SnitchMapping = {
     'iLayerNorm': LayerNormLayer([iLayerNormMapper]),
     'RequantizedAdd': AddLayer([RQAddMapper]),
     'Add': AddLayer([AddMapper]),
+    'Reshape': ReshapeLayer([ReshapeMapper]),
+    'Transpose': TransposeLayer([TransposeMapper])
 }
 
 
@@ -181,6 +186,41 @@ class SnitchPlatform(DeploymentPlatform):
                  variableBuffer = SnitchVariableBuffer,
                  constantBuffer = SnitchConstantBuffer,
                  structBuffer = SnitchStructBuffer,
-                 transientBuffer = SnitchTransientBuffer,
-                 includeList: List[str] = _includeList):
+                 transientBuffer = SnitchTransientBuffer):
         super().__init__(engines, variableBuffer, constantBuffer, structBuffer, transientBuffer)
+
+
+class MemorySnitchPlatform(MemoryPlatform):
+
+    untiledOps = ["add"]
+
+    def __init__(self,
+                 memoryHierarchy: MemoryHierarchy,
+                 defaultTargetMemoryLevel: MemoryLevel,
+                 engines = [SnitchClusterEngine("SnitchCluster")],
+                 variableBuffer = SnitchVariableBuffer,
+                 constantBuffer = SnitchConstantBuffer,
+                 structBuffer = SnitchStructBuffer,
+                 transientBuffer = SnitchTransientBuffer) -> None:
+        super().__init__(memoryHierarchy, defaultTargetMemoryLevel, engines, variableBuffer, constantBuffer,
+                         structBuffer, transientBuffer)
+
+    def getTargetMemoryLevel(self, node: gs.Node, tensorName: str, ctxt: NetworkContext) -> str:
+        if node.op in self.untiledOps:
+            return ctxt.lookup(tensorName)._memoryLevel
+        return super().getTargetMemoryLevel(node, tensorName, ctxt)
+
+
+class MemorySnitchPlatformWrapper(MemoryPlatformWrapper):
+
+    untiledOps = ["add"]
+
+    def __init__(self, platform: SnitchPlatform, memoryHierarchy: MemoryHierarchy, defaultTargetMemoryLevel: MemoryLevel):
+        assert isinstance(platform, SnitchPlatform), \
+        f"Given platform is not an instance of snitchPlatform. Platform type: {type(platform).__name__}"
+        super().__init__(platform, memoryHierarchy, defaultTargetMemoryLevel)
+
+    def getTargetMemoryLevel(self, node: gs.Node, tensorName: str, ctxt: NetworkContext) -> str:
+        if node.op in self.untiledOps:
+            return ctxt.lookup(tensorName)._memoryLevel
+        return super().getTargetMemoryLevel(node, tensorName, ctxt)

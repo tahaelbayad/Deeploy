@@ -23,13 +23,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import copy
+
+from Deeploy.CommonExtensions.CodeTransformationPasses.MemoryAllocation import MemoryPassthroughGeneration
+from Deeploy.DeeployTypes import CodeTransformation
+
 from Deeploy.Targets.Generic.TileConstraints.AddTileConstraint import AddTileConstraint
 from Deeploy.Targets.Snitch.Bindings import SnitchAddBindings, SnitchGemmBindings, SnitchiNoNormBindings, \
-    SnitchiSoftmaxBindings, SnitchRQAddBindings, SnitchRqGemmBindings
+    SnitchiSoftmaxBindings, SnitchRQAddBindings, SnitchRqGemmBindings, SnitchMatMulBindings, SnitchTransposeBindings, SnitchReshapeBindings
 from Deeploy.Targets.Snitch.TileConstraints import iNoNormTileConstraint, iSoftmaxTileConstraint
 from Deeploy.Targets.Snitch.TileConstraints.GemmTileConstraint import GemmTileConstraint
 from Deeploy.Targets.Snitch.TileConstraints.RqGemmTileConstraint import RqGemmTileConstraint
 from Deeploy.TilingExtension.TilerExtension import TilingReadyNodeBindings
+from Deeploy.Targets.Snitch.TileConstraints.MatMulTileConstraint import MatMulTileConstraint
+from Deeploy.Targets.Generic.TileConstraints.TransposeTileConstraint import TransposeTileConstraint
+from Deeploy.Targets.Generic.TileConstraints.NOPTileConstraint import NOPTileConstraint
+from Deeploy.Targets.Generic.Bindings import BasicReshapeBindings
 
 SnitchiSoftmaxTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = SnitchiSoftmaxBindings,
                                                             tileConstraint = iSoftmaxTileConstraint())
@@ -44,3 +53,16 @@ SnitchRqGemmTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = SnitchR
 
 SnitchAddTileReadyBindings = TilingReadyNodeBindings(nodeBindings = SnitchAddBindings,
                                                      tileConstraint = AddTileConstraint())
+
+SnitchMatMulTileReadyBindings = TilingReadyNodeBindings(nodeBindings = SnitchMatMulBindings,
+                                                     tileConstraint = MatMulTileConstraint())
+
+SnitchTransposeTileReadyBindings = TilingReadyNodeBindings(nodeBindings = SnitchTransposeBindings,
+                                                     tileConstraint = TransposeTileConstraint())
+
+# _BasicFlattenBindings = copy.deepcopy(BasicReshapeBindings)
+# for binding in _BasicFlattenBindings:
+#     binding.codeTransformer = CodeTransformation([MemoryPassthroughGeneration("L.*"), MemoryPassthroughGeneration()])
+
+SnitchFlattenTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = BasicReshapeBindings,
+                                                          tileConstraint = NOPTileConstraint())

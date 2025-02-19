@@ -42,7 +42,7 @@ from Deeploy.Targets.Neureka.Platform import MemoryNeurekaPlatform, MemoryNeurek
 from Deeploy.Targets.PULPOpen.Deployer import PULPDeployer
 from Deeploy.Targets.PULPOpen.Platform import MemoryPULPPlatform, MemoryPULPPlatformWrapper, PULPOptimizer, PULPPlatform
 from Deeploy.Targets.Snitch.Deployer import SnitchDeployer
-from Deeploy.Targets.Snitch.Platform import SnitchOptimizer, SnitchPlatform
+from Deeploy.Targets.Snitch.Platform import SnitchOptimizer, SnitchPlatform, MemorySnitchPlatform, MemorySnitchPlatformWrapper
 
 _SIGNPROP_PLATFORMS = ["Apollo3", "Apollo4", "QEMU-ARM", "Generic", "MemPool"]
 _NONSIGNPROP_PLATFORMS = ["Siracusa", "Siracusa_w_neureka", "PULPOpen", "Snitch"]
@@ -95,6 +95,8 @@ def setupMemoryPlatform(platform: DeploymentPlatform, memoryHierarchy: MemoryHie
         weightMemoryLevel = memoryHierarchy.memoryLevels["WeightMemory_SRAM"] \
             if "WeightMemory_SRAM" in memoryHierarchy.memoryLevels else None
         return MemoryNeurekaPlatformWrapper(platform, memoryHierarchy, defaultTargetMemoryLevel, weightMemoryLevel)
+    elif isinstance(platform, SnitchPlatform):
+        return MemorySnitchPlatformWrapper(platform, memoryHierarchy, defaultTargetMemoryLevel)
     else:
         return MemoryPlatformWrapper(platform, memoryHierarchy, defaultTargetMemoryLevel)
 
@@ -209,7 +211,7 @@ def mapDeployer(platform: DeploymentPlatform,
                                 default_channels_first = default_channels_first,
                                 deeployStateDir = deeployStateDir)
 
-    elif isinstance(platform, (SnitchPlatform)):
+    elif isinstance(platform, (SnitchPlatform, MemorySnitchPlatform, MemorySnitchPlatformWrapper)):
         if loweringOptimizer is None:
             loweringOptimizer = SnitchOptimizer
 

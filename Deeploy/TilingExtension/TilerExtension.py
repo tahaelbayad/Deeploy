@@ -323,7 +323,7 @@ class Tiler():
 
     def _setupTensorDimensionProducts(self, tilerModel: TilerModel, ctxt: NetworkContext,
                                       schedule: List[SubGraph]) -> TilerModel:
-
+        schedule = [pattern for pattern in schedule if "node_Constant" not in pattern[0].name]
         for idx, pattern in enumerate(schedule):
             subGraph = gs.Graph(nodes = pattern)
             subgraphTensors: 'OrderedDict[str, gs.Tensor]' = subGraph.tensors(check_duplicates = True)
@@ -339,10 +339,11 @@ class Tiler():
     def _setupGeometricConstraints(self, tilerModel: TilerModel, ctxt: NetworkContext, schedule: List[SubGraph],
                                    layerBinding: 'OrderedDict[str, ONNXLayer]') -> TilerModel:
 
+
         # SCHEREMO: Each pattern is a decoupled sub-problem w.r.t the geometric constraints.
         # We need to regenerate dimension variables for each tensor
         # This is done by setting the copyIdx in the tilerModel
-
+        schedule = [pattern for pattern in schedule if "node_Constant" not in pattern[0].name]
         for idx, pattern in enumerate(schedule):
             tilerModel.copyIdx = idx
 
@@ -363,7 +364,7 @@ class Tiler():
         return tilerModel
 
     def _setupHeuristics(self, tilerModel: TilerModel, ctxt: NetworkContext, schedule: List[SubGraph]) -> TilerModel:
-
+        schedule = [pattern for pattern in schedule if "node_Constant" not in pattern[0].name]
         for idx, pattern in enumerate(schedule):
 
             patternTensorList = []
@@ -402,7 +403,7 @@ class Tiler():
             self, tilerModel: TilerModel, ctxt: NetworkContext, schedule: List[SubGraph],
             layerBinding: 'OrderedDict[str, ONNXLayer]',
             targetMemoryLevelMapping: TargetMemoryLevelMapping) -> Tuple[TilerModel, List[PatternMemoryConstraints]]:
-
+        schedule = [pattern for pattern in schedule if "node_Constant" not in pattern[0].name]
         allMemoryConstraints = self._generateAllMemoryConstraints(tilerModel, ctxt, schedule, layerBinding,
                                                                   targetMemoryLevelMapping)
 

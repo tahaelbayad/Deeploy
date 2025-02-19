@@ -49,9 +49,10 @@ FloatSoftmaxTemplateStr = r"""
     uint32_t batch_size = ${size} / ${lastDimLength};
     uint32_t compute_num = snrt_cluster_compute_core_num();
     int32_t ldI = compute_num * ${input_samples};
-    int32_t batch_offset = ${seq_len} * ${input_samples};
-                                       
-    ${kernelName}(${data_in}, ${data_out}, ldI, batch_offset, batch_size, ${seq_len}, ${input_samples});
+    int32_t batch_offset = ${seq_len} * ${input_samples};                       
+    //${kernelName}(${data_in}, ${data_out}, ldI, batch_offset, batch_size, ${seq_len}, ${input_samples});
+    uint32_t core_id = snrt_global_core_idx();
+    SINGLE_CORE Softmax_fp32(${data_in}, ${data_out}, ${size}, ${lastDimLength});
 """
 
 FloatSoftmax_Template = FloatSoftmaxTemplate(FloatSoftmaxTemplateStr)

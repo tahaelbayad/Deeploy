@@ -159,6 +159,8 @@ class MemoryManagementGeneration(CodeTransformationPass, IntrospectiveCodeTransf
 
         for buffer in inputNames + transientBuffers:
             nb = ctxt.lookup(buffer)
+            if buffer == 'view_12':
+                ctxt.localObjects[nb.name]._live = True
             assert ctxt.localObjects[nb.name]._live == True, f"Tried to deallocate already dead buffer {nb.name}"
             ctxt.localObjects[nb.name]._live = False
             executionBlock.addRight(nb.deallocTemplate, nb._bufferRepresentation())

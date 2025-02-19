@@ -28,15 +28,15 @@ from functools import partial
 from Deeploy.AbstractDataTypes import PointerClass
 from Deeploy.CommonExtensions.CodeTransformationPasses.Closure import ClosureGeneration, MemoryAwareClosureGeneration
 from Deeploy.CommonExtensions.CodeTransformationPasses.MemoryAllocation import ArgumentStructGeneration, \
-    MemoryManagementGeneration
-from Deeploy.CommonExtensions.DataTypes import float32_t, int8_t, int32_t, uint8_t
+    MemoryManagementGeneration, MemoryPassthroughGeneration
+from Deeploy.CommonExtensions.DataTypes import float32_t, int8_t, int32_t, uint8_t, IntegerDataTypes
 from Deeploy.DeeployTypes import CodeTransformation, NodeBinding
 from Deeploy.FutureExtension.CodeTransformationPasses.FutureCodeTransformation import FutureGeneration
-from Deeploy.Targets.Generic.Templates import iNoNormTemplate
-from Deeploy.Targets.Generic.TypeCheckers import AddChecker, GEMMChecker, RQAddChecker, SoftmaxChecker, iNoNormChecker
+from Deeploy.Targets.Generic.Templates import iNoNormTemplate, ReshapeTemplate
+from Deeploy.Targets.Generic.TypeCheckers import AddChecker, GEMMChecker, RQAddChecker, SoftmaxChecker, iNoNormChecker, MatMulChecker, TransposeChecker, ReshapeChecker
 from Deeploy.Targets.Snitch.CodeTransformationPasses import SnitchClusterTiling, SnitchCoreFilterPass, \
     SnitchProfileExecutionBlockPass, SnitchSynchCoresPass
-from Deeploy.Targets.Snitch.Templates import AddTemplate, FloatGemmTemplate, RQAddTemplate, iSoftmaxTemplate
+from Deeploy.Targets.Snitch.Templates import AddTemplate, FloatGemmTemplate, RQAddTemplate, iSoftmaxTemplate, FloatMatMulTemplate, FloatAddTemplate, TransposeTemplate
 from Deeploy.Targets.Snitch.Templates.FloatSoftmaxTemplate import FloatSoftmax_Template
 from Deeploy.Targets.Snitch.Templates.GemmTemplate import SnitchGemm_Template
 from Deeploy.Targets.Snitch.Templates.RqGemmTemplate import SnitchRqGemm_Template
@@ -54,6 +54,11 @@ BasicTransformer = CodeTransformation(
      MemoryManagementGeneration(),
      FutureGeneration()])
 
+
+ReshapeSkipTransformer = CodeTransformation(
+    [ArgumentStructGeneration(), MemoryPassthroughGeneration(),
+     FutureGeneration()])
+
 TiledTransformer = CodeTransformation([
     SnitchCoreFilterPass("compute"),
     SnitchProfileExecutionBlockPass(),
@@ -64,6 +69,9 @@ TiledTransformer = CodeTransformation([
     ArgumentStructGeneration(),
     MemoryManagementGeneration("L1"),
     MemoryAwareFunctionCallClosure(writeback = False, generateStruct = True),
+    TilingVariableReplacement("L2"),
+    ArgumentStructGeneration(),
+    MemoryManagementGeneration("L2"),
     MemoryManagementGeneration()
 ])
 
@@ -88,7 +96,11 @@ SnitchRQAddBindings = [
 SnitchAddBindings = [
     NodeBinding(AddChecker([PointerClass(_type), PointerClass(_type)], [PointerClass(int32_t)]),
                 AddTemplate.referenceTemplate, TiledTransformer) for _type in [int8_t]
+] + [
+    NodeBinding(AddChecker([PointerClass(float32_t), PointerClass(float32_t)], [PointerClass(float32_t)]),
+                FloatAddTemplate.referenceTemplate, TiledTransformer) 
 ]
+
 SnitchGemmBindings = [
     NodeBinding(
         GEMMChecker([PointerClass(int8_t), PointerClass(int8_t),
@@ -108,4 +120,27 @@ SnitchRqGemmBindings = [
             PointerClass(int32_t),
             PointerClass(int32_t)
         ], [PointerClass(int8_t)]), SnitchRqGemm_Template, TiledTransformer)
+]
+
+SnitchMatMulBindings = [
+    NodeBinding(
+        MatMulChecker([PointerClass(float32_t), PointerClass(float32_t),
+                     PointerClass(float32_t)], [PointerClass(float32_t)]), FloatMatMulTemplate.referenceTemplate,
+        TiledTransformer)
+]
+
+SnitchTransposeBindings = [
+    NodeBinding(TransposeChecker([PointerClass(type)], [PointerClass(type)]), TransposeTemplate.referenceTemplate,
+                TiledTransformer) for type in IntegerDataTypes
+] + [
+    NodeBinding(TransposeChecker([PointerClass(float32_t)], [PointerClass(float32_t)]),
+                TransposeTemplate.referenceTemplate, TiledTransformer)
+]
+
+SnitchReshapeBindings = [
+    NodeBinding(ReshapeChecker([PointerClass(type), PointerClass(int32_t)], [PointerClass(type)]),
+                ReshapeTemplate.referenceTemplate, ReshapeSkipTransformer) for type in IntegerDataTypes
+] + [
+    NodeBinding(ReshapeChecker([PointerClass(float32_t), PointerClass(type)], [PointerClass(float32_t)]),
+                ReshapeTemplate.referenceTemplate, ReshapeSkipTransformer) for type in IntegerDataTypes
 ]
