@@ -104,7 +104,8 @@ int main(void) {
     StartTimer();
   }
 #endif // BANSHEE_SIMULATION and GVSOC_SIMULATION
-
+ResetTimer();
+StartTimer();
   RunNetwork(compute_core_id, num_compute_cores);
 
   uint32_t runtimeCycles = 0;
