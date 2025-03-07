@@ -31,7 +31,7 @@ from Deeploy.MemoryLevelExtension.NetworkDeployers.MemoryLevelDeployer import Me
 from Deeploy.DeeployTypes import ConstantBuffer, DeploymentEngine, DeploymentPlatform, NodeMapper, NodeTemplate, \
     StructBuffer, TopologyOptimizer, TransientBuffer, VariableBuffer, NetworkContext
 from Deeploy.MemoryLevelExtension.MemoryLevels import MemoryHierarchy, MemoryLevel
-from Deeploy.Targets.Generic.Bindings import BasicGatherBindings, BasicLayerNormBindings, BasicMatMulBindings, \
+from Deeploy.Targets.Generic.Bindings import BasicGatherBindings, BasicLayerNormBindings, \
     BasicPad1DBindings, BasicPad2DBindings, BasicReshapeBindings, BasicRQIntegerDivBinding
 from Deeploy.Targets.Generic.Layers import AddLayer, GatherLayer, GEMMLayer, LayerNormLayer, MatMulLayer, PadLayer, \
     ReshapeLayer, RQGEMMLayer, RQIntegerDivLayer, SoftmaxLayer, iNoNormLayer, TransposeLayer

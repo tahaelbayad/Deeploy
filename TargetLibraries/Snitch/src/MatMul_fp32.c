@@ -37,10 +37,10 @@ void MatMul_fp32(const float32_t *__restrict__ pSrcA,
                                uint32_t O) {
 
  
-for(uint32_t i = 0; i<16; i++)
-{
-  printf("inside A[%d] = %f ;; B[%d] = %f  \n", i, pSrcA[i], i,  pSrcB[i]);
-}
+// for(uint32_t i = 0; i<16; i++)
+// {
+//   printf("inside A[%d] = %f ;; B[%d] = %f  \n", i, pSrcA[i], i,  pSrcB[i]);
+// }
 
 
 
@@ -54,8 +54,8 @@ for(uint32_t i = 0; i<16; i++)
     }
   }
 
-  for(uint32_t i = 0; i<16; i++)
-  {
-    printf("inside outputmat[%d] = %f \n", i, pDstY[i]);
-  }
+  // for(uint32_t i = 0; i<16; i++)
+  // {
+  //   printf("inside outputmat[%d] = %f \n", i, pDstY[i]);
+  // }
 }

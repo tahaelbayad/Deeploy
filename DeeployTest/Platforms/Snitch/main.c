@@ -105,6 +105,9 @@ int main(void) {
   }
 #endif // BANSHEE_SIMULATION and GVSOC_SIMULATION
 
+  ResetTimer();
+  StartTimer();
+
   RunNetwork(compute_core_id, num_compute_cores);
 
   uint32_t runtimeCycles = 0;
@@ -115,6 +118,11 @@ int main(void) {
     StopTimer();
   }
 #endif // BANSHEE_SIMULATION and GVSOC_SIMULATION
+
+if (snrt_is_dm_core()) {
+  runtimeCycles = getCycles();
+  //DUMP(runtimeCycles);
+  StopTimer(); }
 
   snrt_cluster_hw_barrier();
 
@@ -143,6 +151,7 @@ int main(void) {
           expected = ((float32_t *)testOutputVector[buf])[i];
           actual = ((float32_t *)DeeployNetwork_outputs[buf])[i];
           diff = expected - actual;
+        
 
           if (diff < -1.2e-5 || diff > 1.2e-5) {
             tot_err += 1;

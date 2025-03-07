@@ -24,27 +24,46 @@
 # limitations under the Licens
 from Deeploy.DeeployTypes import NodeTemplate
 
+
 referenceTemplate = NodeTemplate("""
 // GEMM (Name: ${nodeName}, Op: ${nodeOp})
 uint32_t core_id = snrt_global_core_idx();
-                                 BEGIN_SINGLE_CORE
-    ${A_type.typeName} ref_${data_out}_${A} = ${A};
-    ${B_type.typeName} ref_${data_out}_${B} = ${B};
-    ${data_out_type.typeName} ref_${data_out}_${data_out} = ${data_out};
+uint32_t compute_num = snrt_cluster_compute_core_num();
 
-    for(uint32_t i=0; i<${batch}; i++){
-        MatMul_fp32(
-            ref_${data_out}_${A},
-            ref_${data_out}_${B},
-            ref_${data_out}_${data_out},
-            ${M},
-            ${N},
-            ${O}
-        );
+${A_type.typeName} ref_${data_out}_${A} = ${A};
+${B_type.typeName} ref_${data_out}_${B} = ${B};
+${data_out_type.typeName} ref_${data_out}_${data_out} = ${data_out};
 
-        ref_${data_out}_${A} += ${M} * ${N};
-        ref_${data_out}_${B} += ${N} * ${O};
-        ref_${data_out}_${data_out} += ${M} * ${O};
+for(uint32_t i=0; i<${batch}; i++){
+    gemm_fp32_naive(${M} / compute_num, ${O}, ${N}, ref_${data_out}_${A}, ${N} * compute_num, ref_${data_out}_${B}, ${O}, 0, ${O} * compute_num, ref_${data_out}_${data_out}, 0, 1 );
+    //MatMul_fp32( ref_${data_out}_${A}, ref_${data_out}_${B}, ref_${data_out}_${data_out}, ${M}, ${N}, ${O} );
+
+    ref_${data_out}_${A} += ${M} * ${N};
+    ref_${data_out}_${B} += ${N} * ${O};
+    ref_${data_out}_${data_out} += ${M} * ${O};
     }
-END_SINGLE_CORE
+                
 """)
+
+
+
+# referenceTemplate = NodeTemplate("""
+# // GEMM (Name: ${nodeName}, Op: ${nodeOp})
+# uint32_t compute_num = snrt_cluster_compute_core_num();
+
+# ${A_type.typeName} ref_${data_out}_${A} = ${A};
+# ${B_type.typeName} ref_${data_out}_${B} = ${B};
+# ${data_out_type.typeName} ref_${data_out}_${data_out} = ${data_out};
+# for(uint32_t i=0; i<${batch}; i++){                             
+# % if transB:
+#     gemm_fp32_transB_opt(${M} / compute_num, ${O}, ${N}, ref_${data_out}_${A}, ${N} * compute_num, ref_${data_out}_${B}, ${N}, 0, ${O} * compute_num, ref_${data_out}_${data_out}, 0, 1 );
+# % else:                                 
+#     gemm_fp32_opt(${M} / compute_num, ${O}, ${N}, ref_${data_out}_${A}, ${N} * compute_num, ref_${data_out}_${B}, ${O}, 0, ${O} * compute_num, ref_${data_out}_${data_out}, 0, 1 );
+# %endif
+
+#     ref_${data_out}_${A} += ${M} * ${N};
+#     ref_${data_out}_${B} += ${N} * ${O};
+#     ref_${data_out}_${data_out} += ${M} * ${O};
+# }
+
+# """)

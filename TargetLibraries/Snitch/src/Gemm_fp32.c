@@ -233,3 +233,30 @@ void gemm_fp32_opt(uint32_t M, uint32_t N, uint32_t K, float32_t *A,
   }
   snrt_ssr_disable();
 }
+
+
+
+
+void gemm_fp32_naive(uint32_t M, uint32_t N, uint32_t K, float32_t *A,
+  uint32_t ldA, float32_t *B, uint32_t ldB, float32_t *C,
+  uint32_t ldC, float32_t *Y, uint32_t BETA,
+  uint32_t setup_SSR) {
+
+
+    uint32_t compute_id = snrt_global_compute_core_idx();
+    uint32_t A_offset = K * compute_id;
+    uint32_t C_offset = N * compute_id;
+
+    for(uint32_t m = 0; m < M; m++) 
+    {
+      for(uint32_t n = 0; n < N; ++n)
+      {
+        float32_t c = 0;
+        for(uint32_t k = 0; k < K; ++k )
+        {
+          c += A[A_offset + k + m * ldA] * B[k * ldB + n];
+        }
+        Y[C_offset + m * ldC + n] = c;
+      }
+    }
+  }

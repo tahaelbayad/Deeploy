@@ -30,7 +30,7 @@ from Deeploy.DeeployTypes import CodeTransformation
 
 from Deeploy.Targets.Generic.TileConstraints.AddTileConstraint import AddTileConstraint
 from Deeploy.Targets.Snitch.Bindings import SnitchAddBindings, SnitchGemmBindings, SnitchiNoNormBindings, \
-    SnitchiSoftmaxBindings, SnitchRQAddBindings, SnitchRqGemmBindings, SnitchMatMulBindings, SnitchTransposeBindings, SnitchReshapeBindings
+    SnitchiSoftmaxBindings, SnitchRQAddBindings, SnitchRqGemmBindings, SnitchMatMulBindings, SnitchTransposeBindings
 from Deeploy.Targets.Snitch.TileConstraints import iNoNormTileConstraint, iSoftmaxTileConstraint
 from Deeploy.Targets.Snitch.TileConstraints.GemmTileConstraint import GemmTileConstraint
 from Deeploy.Targets.Snitch.TileConstraints.RqGemmTileConstraint import RqGemmTileConstraint

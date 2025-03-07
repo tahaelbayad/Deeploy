@@ -28,15 +28,15 @@ from functools import partial
 from Deeploy.AbstractDataTypes import PointerClass
 from Deeploy.CommonExtensions.CodeTransformationPasses.Closure import ClosureGeneration, MemoryAwareClosureGeneration
 from Deeploy.CommonExtensions.CodeTransformationPasses.MemoryAllocation import ArgumentStructGeneration, \
-    MemoryManagementGeneration, MemoryPassthroughGeneration
+    MemoryManagementGeneration
 from Deeploy.CommonExtensions.DataTypes import float32_t, int8_t, int32_t, uint8_t, IntegerDataTypes
 from Deeploy.DeeployTypes import CodeTransformation, NodeBinding
 from Deeploy.FutureExtension.CodeTransformationPasses.FutureCodeTransformation import FutureGeneration
-from Deeploy.Targets.Generic.Templates import iNoNormTemplate, ReshapeTemplate
-from Deeploy.Targets.Generic.TypeCheckers import AddChecker, GEMMChecker, RQAddChecker, SoftmaxChecker, iNoNormChecker, MatMulChecker, TransposeChecker, ReshapeChecker
+from Deeploy.Targets.Generic.Templates import iNoNormTemplate, MatMulTemplate
+from Deeploy.Targets.Generic.TypeCheckers import AddChecker, GEMMChecker, RQAddChecker, SoftmaxChecker, iNoNormChecker, MatMulChecker, TransposeChecker
 from Deeploy.Targets.Snitch.CodeTransformationPasses import SnitchClusterTiling, SnitchCoreFilterPass, \
     SnitchProfileExecutionBlockPass, SnitchSynchCoresPass
-from Deeploy.Targets.Snitch.Templates import AddTemplate, FloatGemmTemplate, RQAddTemplate, iSoftmaxTemplate, FloatMatMulTemplate, FloatAddTemplate, TransposeTemplate
+from Deeploy.Targets.Snitch.Templates import AddTemplate, FloatGemmTemplate, RQAddTemplate, iSoftmaxTemplate, FloatAddTemplate, FloatMatMulTemplate, TransposeTemplate
 from Deeploy.Targets.Snitch.Templates.FloatSoftmaxTemplate import FloatSoftmax_Template
 from Deeploy.Targets.Snitch.Templates.GemmTemplate import SnitchGemm_Template
 from Deeploy.Targets.Snitch.Templates.RqGemmTemplate import SnitchRqGemm_Template
@@ -52,11 +52,6 @@ BasicTransformer = CodeTransformation(
     [SnitchSynchCoresPass(),
      ArgumentStructGeneration(),
      MemoryManagementGeneration(),
-     FutureGeneration()])
-
-
-ReshapeSkipTransformer = CodeTransformation(
-    [ArgumentStructGeneration(), MemoryPassthroughGeneration(),
      FutureGeneration()])
 
 TiledTransformer = CodeTransformation([
@@ -122,7 +117,10 @@ SnitchRqGemmBindings = [
         ], [PointerClass(int8_t)]), SnitchRqGemm_Template, TiledTransformer)
 ]
 
-SnitchMatMulBindings = [
+SnitchMatMulBindings =[
+    NodeBinding(MatMulChecker([PointerClass(int8_t), PointerClass(int8_t)], [PointerClass(int32_t)]),
+                MatMulTemplate.referenceTemplate, TiledTransformer)
+] + [
     NodeBinding(
         MatMulChecker([PointerClass(float32_t), PointerClass(float32_t),
                      PointerClass(float32_t)], [PointerClass(float32_t)]), FloatMatMulTemplate.referenceTemplate,
@@ -135,12 +133,4 @@ SnitchTransposeBindings = [
 ] + [
     NodeBinding(TransposeChecker([PointerClass(float32_t)], [PointerClass(float32_t)]),
                 TransposeTemplate.referenceTemplate, TiledTransformer)
-]
-
-SnitchReshapeBindings = [
-    NodeBinding(ReshapeChecker([PointerClass(type), PointerClass(int32_t)], [PointerClass(type)]),
-                ReshapeTemplate.referenceTemplate, ReshapeSkipTransformer) for type in IntegerDataTypes
-] + [
-    NodeBinding(ReshapeChecker([PointerClass(float32_t), PointerClass(type)], [PointerClass(float32_t)]),
-                ReshapeTemplate.referenceTemplate, ReshapeSkipTransformer) for type in IntegerDataTypes
 ]

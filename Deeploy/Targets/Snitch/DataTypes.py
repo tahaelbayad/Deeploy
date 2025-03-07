@@ -24,7 +24,7 @@
 # limitations under the License.
 
 from Deeploy.AbstractDataTypes import PointerClass, Struct, VoidType
-from Deeploy.CommonExtensions.DataTypes import uint16_t
+from Deeploy.CommonExtensions.DataTypes import uint16_t, uint32_t
 
 
 class Snitch_DMA_copy(Struct):
@@ -32,7 +32,7 @@ class Snitch_DMA_copy(Struct):
     structTypeDict = {
         "dst": PointerClass(VoidType),
         "src": PointerClass(VoidType),
-        "size": uint16_t,
+        "size": uint32_t,
         "dst_stride": uint16_t,
         "src_stride": uint16_t,
         "repeat": uint16_t,
